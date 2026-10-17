@@ -1,5 +1,7 @@
 # Vanguard DAO
 
+[![Contract tests](https://github.com/Esoterics611/vanguard/actions/workflows/test.yml/badge.svg)](https://github.com/Esoterics611/vanguard/actions/workflows/test.yml)
+
 **A DAO that runs like a disciplined firm.** Members hold ranks, work is posted as funded bounties, and pay follows rank and delivered work, all enforced on chain. Vanguard is the coordination layer for teams that need to ship, not just vote.
 
 | | |
