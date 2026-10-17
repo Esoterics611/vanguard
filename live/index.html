@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vanguard Live</title>
+<meta name="description" content="Vanguard DAO read live from its contracts on Base Sepolia: members, ranks, bounties, tasks and the end-to-end demo run.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column; summary tiles, then the squad, the bounty, the run, the contracts */
+:root{
+  --bg:#F4F5F8; --surface:#FFFFFF; --ink:#141B27; --muted:#5C6677; --rule:#DCE0E7; --soft:#EEF0F5;
+  --accent:#33459A; --good:#1C7A4F; --bad:#B23B3B; --warn:#9E6F16;
+  --display:"Bodoni Moda", Didot, Georgia, serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#0E131C; --surface:#151C28; --ink:#E8ECF3; --muted:#9BA5B7; --rule:#2A3345; --soft:#1B2331;
+  --accent:#8D9EF0; --good:#5CC994; --bad:#EE8080; --warn:#DDA94A; color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:900px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:40px 64px;display:flex;flex-direction:column;gap:44px}
+h1,h2{font-family:var(--display);font-weight:500;margin:0;line-height:1.12;text-wrap:balance}
+h1{font-size:clamp(34px,6vw,52px)}
+h2{font-size:clamp(24px,3.6vw,30px)}
+p{margin:0;max-width:68ch}
+a{color:var(--accent)}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+section{display:flex;flex-direction:column;gap:16px}
+.muted{color:var(--muted)}
+.mono{font-family:var(--mono);font-size:13.5px}
+.status{display:inline-flex;align-items:center;gap:10px;align-self:flex-start;background:var(--surface);border:1px solid var(--rule);border-radius:999px;padding:6px 14px;font-size:14px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--warn)}
+.dot.ok{background:var(--good);box-shadow:0 0 0 4px color-mix(in srgb, var(--good) 22%, transparent)}
+.dot.err{background:var(--bad)}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.tile{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.tile .n{font-family:var(--display);font-size:30px;line-height:1.1;font-variant-numeric:tabular-nums}
+.tile .l{font-size:13px;color:var(--muted)}
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:600px}
+th,td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--soft)}
+tr:last-child td{border-bottom:none}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill{display:inline-block;font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;padding:2px 9px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.pill.good{color:var(--good)} .pill.bad{color:var(--bad)} .pill.warn{color:var(--warn)} .pill.plain{color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.card .head{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;justify-content:space-between}
+.card .head b{font-size:17px}
+.run{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;border:1px solid var(--rule);border-radius:12px;background:var(--surface);overflow:hidden}
+.run li{display:grid;grid-template-columns:32px 92px minmax(0,1fr) auto;gap:10px;align-items:baseline;padding:9px 14px;border-bottom:1px solid var(--rule);font-size:14.5px}
+.run li:last-child{border-bottom:none}
+.run .i{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.run .who{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.run .chk{font-family:var(--mono);font-size:12.5px;white-space:nowrap;text-align:right}
+.run .chk.good{color:var(--good)} .run .chk.bad{color:var(--bad)} .run .chk.wait{color:var(--muted)}
+.err{border-left:3px solid var(--bad);background:var(--soft);padding:12px 16px;border-radius:10px}
+footer{border-top:1px solid var(--rule);padding-top:18px;font-size:14px;color:var(--muted);display:flex;flex-direction:column;gap:6px}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:640px){
+  .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .run li{grid-template-columns:28px minmax(0,1fr);row-gap:2px}
+  .run .who{grid-column:2} .run .lbl{grid-column:2} .run .chk{grid-column:2;text-align:left}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+<header class="head">
+  <section>
+    <div class="eyebrow">Vanguard DAO · Base Sepolia · live</div>
+    <h1>Vanguard, read live from the chain</h1>
+    <p>Every number on this page comes straight from Vanguard's contracts on Base Sepolia, read by your browser as the page loads. Nothing here is a screenshot or a saved copy, and every row links to the block explorer so you can check it.</p>
+    <div class="status" id="status"><span class="dot" id="dot"></span><span id="statusText">Connecting to Base Sepolia…</span></div>
+  </section>
+</header>
+
+<section aria-label="Summary">
+  <div class="tiles">
+    <div class="tile"><span class="n" id="tMembers">–</span><span class="l">Members enlisted</span></div>
+    <div class="tile"><span class="n" id="tUnits">–</span><span class="l">Squads</span></div>
+    <div class="tile"><span class="n" id="tBounties">–</span><span class="l">Bounties completed</span></div>
+    <div class="tile"><span class="n" id="tPaid">–</span><span class="l">VGRD paid for work</span></div>
+  </div>
+</section>
+
+<section id="squad">
+  <div class="eyebrow">The squad</div>
+  <h2 id="squadName">Squad 1</h2>
+  <p class="muted">Rank sets the pay multiplier: the same task pays a Private First Class half as much again as a Private.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Member</th><th>Rank</th><th>Pay multiplier</th><th>Tasks done</th><th>VGRD earned</th><th>VGRD held</th></tr></thead>
+    <tbody id="squadRows"><tr><td colspan="6" class="muted">Loading…</td></tr></tbody>
+  </table></div>
+</section>
+
+<section id="bounties">
+  <div class="eyebrow">Bounties</div>
+  <h2>Work posted, done and paid</h2>
+  <div id="bountyCards"><div class="card muted">Loading…</div></div>
+</section>
+
+<section id="run">
+  <div class="eyebrow">The demo run · 16 Oct 2026</div>
+  <h2>21 transactions, checked again as you watch</h2>
+  <p class="muted">The record of the first end-to-end bounty. Your browser asks the chain for each transaction's receipt and shows whether it succeeded.</p>
+  <ol class="run" id="runList"><li><span></span><span></span><span class="lbl muted">Loading…</span><span></span></li></ol>
+</section>
+
+<section id="contracts">
+  <div class="eyebrow">Contracts</div>
+  <h2>Eight contracts, source verified</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Contract</th><th>Address</th></tr></thead>
+    <tbody id="contractRows"></tbody>
+  </table></div>
+</section>
+
+<footer>
+  <span>Testnet only and not audited. Admin roles are currently held by a single deployer key; moving them to a multisig is the next operational step.</span>
+  <span>Source: <a href="https://github.com/Esoterics611/vanguard">github.com/Esoterics611/vanguard</a> · the run is reproducible with <a href="https://github.com/Esoterics611/vanguard/blob/main/contracts/scripts/demo.js">contracts/scripts/demo.js</a></span>
+</footer>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+<script>
+(() => {
+  const RPCS = ["https://sepolia.base.org", "https://base-sepolia-rpc.publicnode.com"];
+  const EXP = "https://base-sepolia.blockscout.com";
+  const RANKS = ["Guest","Private","Private 2nd class","Private First Class","Corporal","Sergeant","Staff Sergeant","Sergeant First Class","First Sergeant","Second Lieutenant","First Lieutenant","Captain"];
+  const ABBR = ["GUEST","PVT","PV2","PFC","CPL","SGT","SSG","SFC","1SG","2LT","1LT","CPT"];
+  const MULT = ["0×","1.0×","1.2×","1.5×","2.0×","3.0×","4.0×","5.0×","6.0×","8.0×","10.0×","15.0×"];
+  const BOUNTY = ["Active","Completed","Cancelled"], BCLS = ["warn","good","plain"];
+  const TASK = ["Open","Assigned","Submitted","Approved","Rejected"], TCLS = ["plain","warn","warn","good","bad"];
+  const ACTOR = {command:"Command", analystA:"Analyst A", analystB:"Analyst B", leader:"Leader"};
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const short = a => a.slice(0, 6) + "…" + a.slice(-4);
+  const addr = a => `<a class="mono" href="${EXP}/address/${a}">${short(a)}</a>`;
+  const fmt = v => Number(ethers.formatEther(v)).toLocaleString("en-US", {maximumFractionDigits: 2});
+
+  function setStatus(kind, text) { $("dot").className = "dot " + kind; $("statusText").textContent = text; }
+
+  async function provider() {
+    for (const url of RPCS) {
+      try {
+        const p = new ethers.JsonRpcProvider(url, 84532, {staticNetwork: true});
+        await p.getBlockNumber();
+        return p;
+      } catch (e) { /* try the next endpoint */ }
+    }
+    throw new Error("No Base Sepolia RPC endpoint answered");
+  }
+
+  const ABI = {
+    reg: ["function totalSoldiers() view returns (uint256)", "function totalUnits() view returns (uint256)",
+      "function getUnit(uint256) view returns (tuple(uint8 unitType,bytes32 name,address leader,address secondInCommand,uint256 parentUnitId,uint256 memberCount,uint256 createdAt,bool active))",
+      "function getUnitMembers(uint256) view returns (address[])",
+      "function getSoldier(address) view returns (tuple(bytes32 callsign,uint8 rank,uint256 unitId,uint256 tasksCompleted,uint256 totalEarned,uint256 enlistedAt,address invitedBy))"],
+    token: ["function balanceOf(address) view returns (uint256)"],
+    escrow: ["function totalBountiesCompleted() view returns (uint256)", "function nextBountyId() view returns (uint256)",
+      "function getBounty(uint256) view returns (tuple(bytes32 titleHash,address creator,uint256 totalAmount,uint256 remainingAmount,uint256 deadline,uint8 status,uint256[] objectiveIds))"],
+    tasks: ["function nextTaskId() view returns (uint256)",
+      "function getTask(uint256) view returns (tuple(uint256 objectiveId,address assignee,bytes32 descriptionHash,uint256 rewardAmount,uint256 deadline,uint8 status,bytes32 submissionHash,address creator))"],
+    pool: ["function totalDistributed() view returns (uint256)"]
+  };
+
+  async function main() {
+    let dep, run;
+    try {
+      [dep, run] = await Promise.all([fetch("deployment.json").then(r => r.json()), fetch("run.json").then(r => r.json())]);
+    } catch (e) { return fail("Could not load the deployment record: " + e.message); }
+    const A = dep.addresses;
+
+    $("contractRows").innerHTML = Object.entries(A).map(([n, a]) =>
+      `<tr><td><b>${esc(n)}</b></td><td><a class="mono" href="${EXP}/address/${a}?tab=contract">${a}</a></td></tr>`).join("");
+
+    let p;
+    try { p = await provider(); } catch (e) { return fail(e.message); }
+    const reg = new ethers.Contract(A.ArmyRegistry, ABI.reg, p), token = new ethers.Contract(A.VGRDToken, ABI.token, p),
+      escrow = new ethers.Contract(A.BountyEscrow, ABI.escrow, p), tasks = new ethers.Contract(A.TaskRegistry, ABI.tasks, p),
+      pool = new ethers.Contract(A.RewardPool, ABI.pool, p);
+
+    const tick = async () => {
+      try { const b = await p.getBlockNumber(); setStatus("ok", `Live · block ${b.toLocaleString("en-US")} · read directly from the chain`); }
+      catch (e) { setStatus("err", "Lost connection to Base Sepolia; retrying"); }
+    };
+    tick(); setInterval(tick, 12000);
+
+    try {
+      const [soldiers, units, done, paid] = await Promise.all([reg.totalSoldiers(), reg.totalUnits(), escrow.totalBountiesCompleted(), pool.totalDistributed()]);
+      $("tMembers").textContent = soldiers.toString(); $("tUnits").textContent = units.toString();
+      $("tBounties").textContent = done.toString(); $("tPaid").textContent = fmt(paid);
+
+      const unit = await reg.getUnit(1);
+      let name = "Squad 1";
+      try { const s = ethers.decodeBytes32String(unit.name); if (s) name = s; } catch (e) { name = "Alpha Squad"; }
+      $("squadName").textContent = name;
+      const members = await reg.getUnitMembers(1);
+      const rows = await Promise.all(members.map(async m => { const [s, bal] = await Promise.all([reg.getSoldier(m), token.balanceOf(m)]); return {m, s, bal}; }));
+      $("squadRows").innerHTML = rows.length ? rows.map(({m, s, bal}) => {
+        const r = Number(s.rank);
+        return `<tr><td>${addr(m)}${m.toLowerCase() === unit.leader.toLowerCase() ? ' <span class="pill plain">leader</span>' : ""}</td><td>${esc(RANKS[r] || r)} <span class="muted mono">${esc(ABBR[r] || "")}</span></td><td class="num">${esc(MULT[r] || "")}</td><td class="num">${s.tasksCompleted}</td><td class="num">${fmt(s.totalEarned)}</td><td class="num">${fmt(bal)}</td></tr>`;
+      }).join("") : `<tr><td colspan="6" class="muted">No members yet.</td></tr>`;
+
+      const nb = Number(await escrow.nextBountyId()), nt = Number(await tasks.nextTaskId());
+      const allTasks = await Promise.all(Array.from({length: Math.max(0, nt - 1)}, (_, i) => tasks.getTask(i + 1).then(t => ({id: i + 1, t}))));
+      const bounties = await Promise.all(Array.from({length: Math.max(0, nb - 1)}, (_, i) => escrow.getBounty(i + 1).then(b => ({id: i + 1, b}))));
+      $("bountyCards").innerHTML = bounties.length ? bounties.map(({id, b}) => {
+        const objs = b.objectiveIds.map(Number), st = Number(b.status);
+        const ts = allTasks.filter(x => objs.includes(Number(x.t.objectiveId)));
+        return `<div class="card"><div class="head"><b>Bounty #${id}</b><span class="pill ${BCLS[st] || "plain"}">${esc(BOUNTY[st] || st)}</span></div>
+          <div class="muted">${fmt(b.totalAmount)} VGRD locked in escrow · ${fmt(b.remainingAmount)} remaining · posted by ${addr(b.creator)}</div>
+          <div class="tbl"><table><thead><tr><th>Task</th><th>Assignee</th><th>Base reward</th><th>Status</th><th>Submission fingerprint</th></tr></thead><tbody>
+          ${ts.map(({id, t}) => { const s = Number(t.status); return `<tr><td class="num">#${id}</td><td>${addr(t.assignee)}</td><td class="num">${fmt(t.rewardAmount)} VGRD</td><td><span class="pill ${TCLS[s] || "plain"}">${esc(TASK[s] || s)}</span></td><td class="mono">${t.submissionHash === ethers.ZeroHash ? "–" : esc(t.submissionHash.slice(0, 14)) + "…"}</td></tr>`; }).join("") || `<tr><td colspan="5" class="muted">No tasks yet.</td></tr>`}
+          </tbody></table></div></div>`;
+      }).join("") : `<div class="card muted">No bounties yet.</div>`;
+    } catch (e) {
+      fail("Reading the contracts failed: " + (e.shortMessage || e.message), true);
+    }
+
+    const steps = run.steps || [];
+    $("runList").innerHTML = steps.map((s, i) => `<li><span class="i">${String(i + 1).padStart(2, "0")}</span><span class="who">${esc(ACTOR[s.actor] || s.actor)}</span><span class="lbl">${s.tx ? `<a href="${EXP}/tx/${s.tx}">${esc(s.label)}</a>` : esc(s.label)}</span><span class="chk wait" id="chk${i}">checking…</span></li>`).join("");
+    for (let i = 0; i < steps.length; i += 5) {
+      await Promise.all(steps.slice(i, i + 5).map(async (s, j) => {
+        const el = $("chk" + (i + j)); if (!s.tx) { el.textContent = ""; return; }
+        try {
+          const r = await p.getTransactionReceipt(s.tx);
+          if (!r) { el.textContent = "not found"; el.className = "chk bad"; }
+          else if (r.status === 1) { el.textContent = `✓ block ${r.blockNumber.toLocaleString("en-US")}`; el.className = "chk good"; }
+          else { el.textContent = "✗ reverted"; el.className = "chk bad"; }
+        } catch (e) { el.textContent = "could not check"; el.className = "chk bad"; }
+      }));
+    }
+  }
+
+  function fail(msg, partial) {
+    setStatus("err", partial ? "Some reads failed" : "Could not reach Base Sepolia");
+    const box = document.createElement("div"); box.className = "err";
+    box.textContent = msg + ". Reload the page to try again; every address below still links to the block explorer.";
+    document.querySelector("header section").appendChild(box);
+  }
+
+  if (window.ethers) main(); else fail("The ethers library did not load");
+})();
+</script>
+</body>
+</html>

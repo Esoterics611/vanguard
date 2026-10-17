@@ -9,6 +9,7 @@
 | **Network** | Base Sepolia (chain 84532) |
 | **Contracts** | 8 deployed 27 Apr 2026, all source verified on Blockscout |
 | **Proven end to end** | A full bounty ran on the live contracts in 21 transactions ([record](contracts/demo/run.json)) |
+| **Live view** | [esoterics611.github.io/vanguard](https://esoterics611.github.io/vanguard/) reads the contracts in your browser |
 | **Tests** | 15 passing (`contracts/`) |
 | **Token** | VGRD, 1 billion supply, rank-weighted governance |
 
