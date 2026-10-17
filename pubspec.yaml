@@ -1,0 +1,69 @@
+name: vanguard_app
+description: "Mission Control Army - Gamified military hierarchy for anonymous blockchain coordination"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.7
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+
+  # Immutable Models
+  freezed_annotation: ^3.0.0
+  json_annotation: ^4.9.0
+
+  # Networking
+  dio: ^5.7.0
+
+  # UI/Design
+  cupertino_icons: ^1.0.8
+  google_fonts: ^6.2.1
+  flutter_svg: ^2.0.16
+
+  # Graph Visualization
+  graphview: ^1.2.0
+
+  # Utilities
+  intl: ^0.20.2
+  collection: ^1.19.1
+  uuid: ^4.5.1
+
+  # Firebase
+  firebase_core: ^3.8.1
+  cloud_firestore: ^5.6.0
+  firebase_auth: ^5.5.1
+  cloud_functions: ^5.2.0
+
+  # Local Storage
+  path_provider: ^2.1.5
+  path: ^1.9.1
+
+  # Web3 (for wallet connection)
+  web3dart: ^2.7.3
+  shared_preferences: ^2.5.4
+  http: ^1.6.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+  # Code Generation
+  build_runner: ^2.4.15
+  freezed: ^3.1.0
+  json_serializable: ^6.9.4
+  riverpod_generator: ^2.6.5
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/icons/
+    - assets/images/

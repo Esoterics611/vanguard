@@ -1,0 +1,151 @@
+site_name: "Vanguard DAO Protocol Guide"
+site_description: "The definitive guide to the Vanguard decentralized coordination protocol — for participants, developers, and institutional stakeholders."
+site_url: https://docs.vanguarddao.xyz
+repo_url: https://github.com/vanguard-dao/vanguard
+repo_name: vanguard-dao/vanguard
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: cyan
+      accent: amber
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: cyan
+      accent: amber
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  font:
+    text: Inter
+    code: JetBrains Mono
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.top
+    - navigation.indexes
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search
+  - tags
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.mark
+  - pymdownx.critic
+  - pymdownx.keys
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - toc:
+      permalink: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/vanguard-dao/vanguard
+  generator: false
+
+copyright: "&copy; 2026 Vanguard DAO. All rights reserved."
+
+nav:
+  - Home: index.md
+
+  - "I. Introduction":
+    - "Protocol Overview": introduction/overview.md
+    - "Why Vanguard Exists": introduction/why-vanguard.md
+    - "Architecture at a Glance": introduction/architecture.md
+    - "Key Terminology": introduction/terminology.md
+
+  - "II. Getting Started":
+    - "Prerequisites": getting-started/prerequisites.md
+    - "Wallet Setup": getting-started/wallet-setup.md
+    - "Acquiring Testnet ETH": getting-started/testnet-eth.md
+    - "Connecting to the Protocol": getting-started/connecting.md
+    - "Your First Enlistment": getting-started/first-enlistment.md
+
+  - "III. The Rank System":
+    - "Rank Overview": rank-system/overview.md
+    - "Rank Progression Path": rank-system/progression.md
+    - "Multipliers and Voting Power": rank-system/multipliers.md
+    - "Training and Qualifications": rank-system/training.md
+    - "Promotion Mechanics": rank-system/promotions.md
+
+  - "IV. VGRD Token Economics":
+    - "Token Overview": tokenomics/overview.md
+    - "Supply and Distribution": tokenomics/supply.md
+    - "Reward Mechanics": tokenomics/rewards.md
+    - "Token Utility": tokenomics/utility.md
+    - "Valuation Framework": tokenomics/valuation.md
+
+  - "V. Core Operations":
+    - "Operations Overview": operations/overview.md
+    - "Bounties": operations/bounties.md
+    - "Objectives": operations/objectives.md
+    - "Tasks": operations/tasks.md
+    - "The Complete Workflow": operations/complete-workflow.md
+
+  - "VI. Governance":
+    - "Governance Model": governance/model.md
+    - "Proposals": governance/proposals.md
+    - "Voting": governance/voting.md
+    - "Execution and Enforcement": governance/execution.md
+
+  - "VII. Treasury & Finance":
+    - "Treasury Overview": treasury/overview.md
+    - "Payment Streams": treasury/streams.md
+    - "Financial Controls": treasury/controls.md
+    - "Reporting and Transparency": treasury/reporting.md
+
+  - "VIII. Developer Guide":
+    - "Environment Setup": developer-guide/setup.md
+    - "Contract Integration": developer-guide/integration.md
+    - "Building on Vanguard": developer-guide/building.md
+    - "Testing": developer-guide/testing.md
+    - "Deployment": developer-guide/deployment.md
+
+  - "IX. Contract Reference":
+    - "Reference Overview": contract-reference/overview.md
+    - "VGRDToken": contract-reference/vgrd-token.md
+    - "ArmyRegistry": contract-reference/army-registry.md
+    - "RankManager": contract-reference/rank-manager.md
+    - "TaskRegistry": contract-reference/task-registry.md
+    - "RewardPool": contract-reference/reward-pool.md
+    - "BountyEscrow": contract-reference/bounty-escrow.md
+    - "Treasury": contract-reference/treasury.md
+    - "VanguardDAO": contract-reference/vanguard-dao.md
+
+  - "X. Risk & Compliance":
+    - "Smart Contract Risk": risk-and-compliance/contract-risk.md
+    - "Operational Risk": risk-and-compliance/operational-risk.md
+    - "Regulatory Considerations": risk-and-compliance/regulatory.md
+    - "Glossary": risk-and-compliance/glossary.md

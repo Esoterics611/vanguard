@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "27346039636",
+    "project_id": "vanguard-dao",
+    "storage_bucket": "vanguard-dao.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:27346039636:android:9d94c409cfcc37c63c4ec1",
+        "android_client_info": {
+          "package_name": "com.vanguard.vanguard_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD110QUwQSt5hQxnWjhV2FnHgOg6J8-gQI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

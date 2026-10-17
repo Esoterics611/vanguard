@@ -1,0 +1,25 @@
+node_modules
+.env
+cache
+artifacts
+typechain-types
+coverage
+coverage.json
+dist
+deployed/hardhat.json
+deployed/localhost.json
+
+# Hardhat files
+hardhat-stack-traces
+
+# IDE
+.idea
+.vscode
+
+# OS
+.DS_Store
+Thumbs.db
+
+# throwaway testnet keys written by scripts/demo.js
+demo/wallets.json
+demo-fork/

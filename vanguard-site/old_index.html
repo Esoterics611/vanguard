@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VANGUARD DAO | The Decentralized Investment Bank</title>
+    
+    <!-- Fonts: Inter + JetBrains Mono for English, Heebo + Rubik for Hebrew -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Rubik:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'vanguard-black': '#050505',
+                        'vanguard-navy': '#0a0e1a',
+                        'vanguard-gray': '#111827',
+                        'vanguard-cyan': '#06b6d4',
+                        'vanguard-gold': '#d4af37',
+                        'vanguard-olive': '#556b2f',
+                        'vanguard-slate': '#1f2937'
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'Heebo', 'sans-serif'],
+                        'mono': ['JetBrains Mono', 'monospace'],
+                        'serif': ['Playfair Display', 'serif'],
+                        'hebrew': ['Heebo', 'Rubik', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #050505;
+            color: #e5e7eb;
+            transition: all 0.3s ease;
+        }
+        
+        /* Hebrew RTL Support */
+        [dir="rtl"] {
+            font-family: 'Heebo', 'Rubik', sans-serif;
+        }
+        
+        [dir="rtl"] .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+            direction: ltr;
+            text-align: right;
+        }
+        
+        [dir="rtl"] .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #06b6d4 0%, #d4af37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .gold-border {
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
+        }
+        
+        .cyan-border {
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.1);
+        }
+        
+        .grid-bg {
+            background-image: 
+                linear-gradient(rgba(6, 182, 212, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(6, 182, 212, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        
+        .tactical-border {
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .tactical-border::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: -1px;
+            width: 8px; height: 8px;
+            border-top: 2px solid #06b6d4;
+            border-left: 2px solid #06b6d4;
+        }
+        
+        .tactical-border::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; right: -1px;
+            width: 8px; height: 8px;
+            border-bottom: 2px solid #d4af37;
+            border-right: 2px solid #d4af37;
+        }
+
+        [dir="rtl"] .tactical-border::before {
+            border-left: none;
+            border-right: 2px solid #06b6d4;
+            left: auto;
+            right: -1px;
+        }
+
+        [dir="rtl"] .tactical-border::after {
+            border-right: none;
+            border-left: 2px solid #d4af37;
+            right: auto;
+            left: -1px;
+        }
+        
+        .lang-en, .lang-he {
+            display: none;
+        }
+        
+        .lang-en.active, .lang-he.active {
+            display: block;
+        }
+        
+        .hebrew-text {
+            font-family: 'Heebo', 'Rubik', sans-serif;
+            line-height: 1.6;
+        }
+        
+        .rank-badge {
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        [dir="rtl"] .rank-badge {
+            font-family: 'Heebo', sans-serif;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="bg-vanguard-black text-gray-300 antialiased grid-bg" dir="ltr" id="appBody">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-vanguard-black/90 backdrop-blur-md border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-gradient-to-br from-vanguard-cyan to-vanguard-gold rounded-sm flex items-center justify-center border border-white/20">
+                    <span class="text-black font-bold font-mono text-lg">V</span>
+                </div>
+                <div>
+                    <span class="font-serif text-xl font-bold text-white tracking-wider block leading-none">VANGUARD</span>
+                    <span class="text-[10px] text-vanguard-cyan font-mono uppercase tracking-widest lang-en active">Decentralized Investment Bank</span>
+                    <span class="text-[10px] text-vanguard-cyan font-mono uppercase tracking-widest lang-he hebrew-text">בנק השקעות מבוזר</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-6">
+                <button onclick="toggleLanguage()" class="flex items-center gap-2 px-4 py-2 bg-vanguard-gray border border-vanguard-cyan/30 rounded hover:bg-vanguard-cyan/10 transition-all group">
+                    <span class="text-vanguard-cyan font-mono text-sm font-bold lang-en active">HE</span>
+                    <span class="text-vanguard-cyan font-mono text-sm font-bold lang-he">EN</span>
+                    <span class="text-xs text-gray-400 group-hover:text-white transition-colors lang-en active">עברית</span>
+                    <span class="text-xs text-gray-400 group-hover:text-white transition-colors lang-he">English</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Executive Summary -->
+    <section class="pt-32 pb-20 px-6">
+        <div class="max-w-5xl mx-auto">
+            <div class="mb-6">
+                <span class="text-vanguard-gold font-mono text-xs tracking-widest uppercase border border-vanguard-gold/30 px-3 py-1 rounded-full lang-en active">Protocol Specification v2.0</span>
+                <span class="text-vanguard-gold font-mono text-xs tracking-widest uppercase border border-vanguard-gold/30 px-3 py-1 rounded-full lang-he hebrew-text">מפרט פרוטוקול v2.0</span>
+            </div>
+            
+            <h1 class="font-serif text-5xl md:text-7xl font-bold text-white mb-8 leading-tight">
+                <span class="block lang-en active">The Decentralized</span>
+                <span class="block lang-en active gradient-text italic">Investment Bank</span>
+                <span class="block lang-he hebrew-text">בנק ההשקעות</span>
+                <span class="block lang-he hebrew-text gradient-text">המבוזר</span>
+            </h1>
+            
+            <div class="max-w-3xl lang-en active">
+                <p class="text-xl text-gray-400 mb-6 leading-relaxed">
+                    Vanguard is a trustless coordination protocol that operates like a global investment bank—but without the building, the compliance department, or the managing directors taking 80% of the carry.
+                </p>
+                <p class="text-lg text-gray-400 leading-relaxed">
+                    Traditional investment banks coordinate capital, talent, and deal flow through rigid hierarchies. Vanguard does the same thing, but on-chain: anonymous analysts form teams, execute on opportunities, climb the ranks through verified performance, and share in the value they create. No CVs. No politics. No geographic limits. Just pure meritocracy backed by cryptographic proof.
+                </p>
+            </div>
+
+            <div class="max-w-3xl lang-he hebrew-text text-right">
+                <p class="text-xl text-gray-400 mb-6 leading-relaxed">
+                    ונגרד הוא פרוטוקול תיאום לא מבוסס אמון שפועל כמו בנק השקעות גלובלי—אבל בלי הבניין, מחלקת התאימות, או מנהלים בכירים שלוקחים 80% מהרווחים.
+                </p>
+                <p class="text-lg text-gray-400 leading-relaxed">
+                    בנקי השקעות מסורתיים מתאמים הון, כישרון וזרם עסקאות דרך היררכיות נוקשות. ונגרד עושה את אותו הדבר, אבל על הבלוקצ'יין: אנליסטים אנונימיים יוצרים צוותים, מבצעים הזדמנויות, טופסים בדרגות דרך ביצוע מאומת, וחולקים בערך שהם יוצרים. אין קורות חיים. אין פוליטיקה. אין גבולות גיאוגרפיים. רק מיטבנות טהורה מגובה בהוכחה קריפטוגרפית.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Structure -->
+    <section class="py-20 bg-vanguard-gray/30 border-y border-gray-800">
+        <div class="max-w-6xl mx-auto px-6">
+            <h2 class="font-serif text-3xl md:text-4xl font-bold text-white mb-4 lang-en active">Military Precision, Banking Economics</h2>
+            <h2 class="font-serif text-3xl md:text-4xl font-bold text-white mb-4 lang-he hebrew-text text-right">דיוק צבאי, כלכלת בנקאות</h2>
+            
+            <p class="text-gray-400 mb-12 max-w-3xl lang-en active">
+                Investment banks already operate like armies. Vanguard codifies this. The ranks aren't cosplay—they're functional roles with real authority and real economics.
+            </p>
+            <p class="text-gray-400 mb-12 max-w-3xl mr-auto lang-he hebrew-text text-right">
+                בנקי השקעות כבר פועלים כמו צבאות. ונגרד מקודד את זה. הדרגות לא הן תלבושת—they תפקידים פונקציונליים עם סמכות אמיתית וכלכלה אמיתית.
+            </p>
+
+            <!-- Rank Table -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-vanguard-cyan/30 text-vanguard-cyan font-mono text-sm uppercase tracking-wider">
+                            <th class="pb-4 pr-4 lang-en active">Military Rank</th>
+                            <th class="pb-4 pr-4 lang-en active">Banking Equivalent</th>
+                            <th class="pb-4 lang-en active">Vanguard Function</th>
+                            
+                            <th class="pb-4 pl-4 text-right lang-he hebrew-text">דרגה צבאית</th>
+                            <th class="pb-4 pl-4 text-right lang-he hebrew-text">מקבילה בבנקאות</th>
+                            <th class="pb-4 text-right lang-he hebrew-text">תפקיד בונגרד</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm divide-y divide-gray-800">
+                        <!-- PVT-CPL -->
+                        <tr class="hover:bg-white/5 transition-colors">
+                            <td class="py-4 pr-4 font-mono text-gray-300 lang-en active">PVT – CPL</td>
+                            <td class="py-4 pr-4 text-gray-300 lang-en active">Analyst</td>
+                            <td class="py-4 text-gray-400 lang-en active">Execute tasks, build deliverables</td>
+                            
+                            <td class="py-4 pl-4 font-mono text-gray-300 lang-he hebrew-text text-right">טוראי – רב"ט</td>
+                            <td class="py-4 pl-4 text-gray-300 lang-he hebrew-text text-right">אנליסט</td>
+                            <td class="py-4 text-gray-400 lang-he hebrew-text text-right">ביצוע משימות, בניית תוצרים</td>
+                        </tr>
+                        <!-- SGT -->
+                        <tr class="hover:bg-white/5 transition-colors">
+                            <td class="py-4 pr-4 font-mono text-vanguard-cyan lang-en active">SGT</td>
+                            <td class="py-4 pr-4 text-gray-300 lang-en active">Senior Analyst</td>
+                            <td class="py-4 text-gray-400 lang-en active">Lead task execution, QA work product</td>
+                            
+                            <td class="py-4 pl-4 font-mono text-vanguard-cyan lang-he hebrew-text text-right">סמל (סמ״ל)</td>
+                            <td class="py-4 pl-4 text-gray-300 lang-he hebrew-text text-right">אנליסט בכיר</td>
+                            <td class="py-4 text-gray-400 lang-he hebrew-text text-right">הובלת ביצוע משימות, בקרת איכות</td>
+                        </tr>
+                        <!-- SSG -->
+                        <tr class="hover:bg-white/5 transition-colors">
+                            <td class="py-4 pr-4 font-mono text-vanguard-cyan lang-en active">SSG</td>
+                            <td class="py-4 pr-4 text-gray-300 lang-en active">Associate</td>
+                            <td class="py-4 text-gray-400 lang-en active">Manage analyst teams, own workstreams</td>
+                            
+                            <td class="py-4 pl-4 font-mono text-vanguard-cyan lang-he hebrew-text text-right">סמל ראשון (סמ״ר)</td>
+                            <td class="py-4 pl-4 text-gray-300 lang-he hebrew-text text-right">אסושיאט (שותף)</td>
+                            <td class="py-4 text-gray-400 lang-he hebrew-text text-right">ניהול צוותי אנליסטים, בעלות על workstreams</td>
+                        </tr>
+                        <!-- SFC/1SG -->
+                        <tr class="hover:bg-white/5 transition-colors">
+                            <td class="py-4 pr-4 font-mono text-vanguard-gold lang-en active">SFC / 1SG</td>
+                            <td class="py-4 pr-4 text-gray-300 lang-en active">VP</td>
+                            <td class="py-4 text-gray-400 lang-en active">Run deal teams, coordinate sections</td>
+                            
+                            <td class="py-4 pl-4 font-mono text-vanguard-gold lang-he hebrew-text text-right">רס״ל / רס״ר</td>
+                            <td class="py-4 pl-4 text-gray-300 lang-he hebrew-text text-right">סמנכ״ל (VP)</td>
+                            <td class="py-4 text-gray-400 lang-he hebrew-text text-right">ניהול צוותי עסקאות, תיאום מחלקות</td>
+                        </tr>
+                        <!-- 2LT/1LT -->
+                        <tr class="hover:bg-white/5 transition-colors">
+                            <td class="py-4 pr-4 font-mono text-vanguard-gold lang-en active">2LT / 1LT</td>
+                            <td class="py-4 pr-4 text-gray-300 lang-en active">Director</td>
+                            <td class="py-4 text-gray-400 lang-en active">Structure opportunities, lead platoons</td>
+                            
+                            <td class="py-4 pl-4 font-mono text-vanguard-gold lang-he hebrew-text text-right">סגן (סג״ם) / סגן</td>
+                            <td class="py-4 pl-4 text-gray-300 lang-he hebrew-text text-right">מנהל (Director)</td>
+                            <td class="py-4 text-gray-400 lang-he hebrew-text text-right">בניית הזדמנויות, פיקוד על פלוגות</td>
+                        </tr>
+                        <!-- CPT -->
+                        <tr class="hover:bg-white/5 transition-colors bg-vanguard-gold/5">
+                            <td class="py-4 pr-4 font-mono text-vanguard-gold font-bold lang-en active">CPT</td>
+                            <td class="py-4 pr-4 text-white font-bold lang-en active">Managing Director</td>
+                            <td class="py-4 text-gray-300 lang-en active">Source deals, deploy capital, command companies</td>
+                            
+                            <td class="py-4 pl-4 font-mono text-vanguard-gold font-bold lang-he hebrew-text text-right">סרן</td>
+                            <td class="py-4 pl-4 text-white font-bold lang-he hebrew-text text-right">מנהל כללי (MD)</td>
+                            <td class="py-4 text-gray-300 lang-he hebrew-text text-right">זיהוי עסקאות, פריסת הון, פיקוד על פלוגות</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Economics of Rank -->
+    <section class="py-20 px-6">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="font-serif text-3xl font-bold text-white mb-12 lang-en active">The Economics of Rank</h2>
+            <h2 class="font-serif text-3xl font-bold text-white mb-12 lang-he hebrew-text text-right">הכלכלה של הדרגה</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Multiplier -->
+                <div class="tactical-border p-6 bg-vanguard-gray/20 rounded-lg">
+                    <div class="text-vanguard-cyan font-mono text-xs mb-2 uppercase tracking-wider lang-en active">01. Reward Multiplier</div>
+                    <div class="text-vanguard-cyan font-mono text-xs mb-2 uppercase tracking-wider lang-he hebrew-text text-right">01. מכפיל תגמול</div>
+                    
+                    <div class="space-y-3 font-mono text-sm mt-4 lang-en active">
+                        <div class="flex justify-between border-b border-gray-800 pb-2">
+                            <span class="text-gray-400">Analyst (PVT)</span>
+                            <span class="text-white">1.0x</span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-800 pb-2">
+                            <span class="text-vanguard-cyan">Senior (SGT)</span>
+                            <span class="text-vanguard-cyan">3.0x</span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-800 pb-2">
+                            <span class="text-vanguard-gold">Director (1LT)</span>
+                            <span class="text-vanguard-gold">10.0x</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 font-mono text-sm mt-4 lang-he hebrew-text text-right">
+                        <div class="flex justify-between border-b border-gray-800 pb-2">
+                            <span class="text-gray-400">טוראי</span>
+                            <span class="text-white">1.0x</span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-800 pb-2">
+                            <span class="text-vanguard-cyan">סמל</span>
+                            <span class="text-vanguard-cyan">3.0x</span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-800 pb-2">
+                            <span class="text-vanguard-gold">סגן</span>
+                            <span class="text-vanguard-gold">10.0x</span>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-gray-500 mt-4 lang-en active">Same work, different economics based on proven capability.</p>
+                    <p class="text-xs text-gray-500 mt-4 lang-he hebrew-text text-right">עבודה זהה, כלכלה שונה על בסיס יכולת מוכחת.</p>
+                </div>
+
+                <!-- Voting Power -->
+                <div class="tactical-border p-6 bg-vanguard-gray/20 rounded-lg">
+                    <div class="text-vanguard-cyan font-mono text-xs mb-2 uppercase tracking-wider lang-en active">02. Voting Power</div>
+                    <div class="text-vanguard-cyan font-mono text-xs mb-2 uppercase tracking-wider lang-he hebrew-text text-right">02. כוח הצבעה</div>
+                    
+                    <div class="mt-4 space-y-2 lang-en active">
+                        <p class="text-sm text-gray-400">Governance weight scales with proven capability:</p>
+                        <div class="p-3 bg-black/30 rounded font-mono text-xs text-vanguard-cyan border border-vanguard-cyan/20">
+                            Power = VGRD × Rank Multiplier
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">Director with 10K VGRD = 350K votes</p>
+                    </div>
+
+                    <div class="mt-4 space-y-2 lang-he hebrew-text">
+                        <p class="text-sm text-gray-400 text-right">משקל הגברה נקבע לפי יכולת מוכחת:</p>
+                        <div class="p-3 bg-black/30 rounded font-mono text-xs text-vanguard-cyan border border-vanguard-cyan/20 text-center">
+                            כוח = VGRD × מכפיל דרגה
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2 text-right">מנהל עם 10K VGRD = 350K קולות</p>
+                    </div>
+                </div>
+
+                <!-- Authority Scope -->
+                <div class="tactical-border p-6 bg-vanguard-gray/20 rounded-lg">
+                    <div class="text-vanguard-cyan font-mono text-xs mb-2 uppercase tracking-wider lang-en active">03. Authority Scope</div>
+                    <div class="text-vanguard-cyan font-mono text-xs mb-2 uppercase tracking-wider lang-he hebrew-text text-right">03. תחום סמכות</div>
+                    
+                    <ul class="space-y-2 text-sm text-gray-400 mt-4 lang-en active">
+                        <li class="flex items-center gap-2"><span class="text-vanguard-cyan">▪</span> Analysts: Execute assigned tasks</li>
+                        <li class="flex items-center gap-2"><span class="text-vanguard-cyan">▪</span> Associates: Create tasks, manage teams</li>
+                        <li class="flex items-center gap-2"><span class="text-vanguard-gold">▪</span> Directors: Structure bounties</li>
+                        <li class="flex items-center gap-2"><span class="text-vanguard-gold">▪</span> MDs: Deploy treasury capital</li>
+                    </ul>
+
+                    <ul class="space-y-2 text-sm text-gray-400 mt-4 lang-he hebrew-text text-right">
+                        <li class="flex items-center justify-end gap-2"><span class="text-vanguard-cyan">▪</span> אנליסטים: ביצוע משימות מוקצות</li>
+                        <li class="flex items-center justify-end gap-2"><span class="text-vanguard-cyan">▪</span> אסושיאטס: יצירת משימות, ניהול צוותים</li>
+                        <li class="flex items-center justify-end gap-2"><span class="text-vanguard-gold">▪</span> מנהלים: בניית באונטיז</li>
+                        <li class="flex items-center justify-end gap-2"><span class="text-vanguard-gold">▪</span> מנכ״לים: פריסת הון אוצר</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Transaction Layer -->
+    <section class="py-20 bg-vanguard-gray/20 border-y border-gray-800 px-6">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="font-serif text-3xl font-bold text-white mb-8 lang-en active">The Transaction Layer</h2>
+            <h2 class="font-serif text-3xl font-bold text-white mb-8 lang-he hebrew-text text-right">שכבת העסקאות</h2>
+            
+            <div class="p-8 gold-border bg-vanguard-gray/10 rounded-lg mb-8">
+                <h3 class="text-vanguard-gold font-mono text-sm uppercase tracking-widest mb-4 lang-en active">Bounty Anatomy</h3>
+                <h3 class="text-vanguard-gold font-mono text-sm uppercase tracking-widest mb-4 lang-he hebrew-text text-right">אנטומיית באונטי</h3>
+                
+                <div class="font-mono text-xs space-y-1 text-gray-500 lang-en active">
+                    <div>BOUNTY: "Due Diligence on DeFi Protocol X"</div>
+                    <div>Creator: CPT PHOENIX-1A1 (MD-equivalent)</div>
+                    <div>Total Value: 50,000 VGRD | Deadline: 14 days</div>
+                    <div>Escrow: Funds locked in BountyEscrow.sol</div>
+                </div>
+
+                <div class="font-mono text-xs space-y-1 text-gray-500 lang-he hebrew-text text-right mt-4">
+                    <div>באונטי: "בדיקת נאותות על פרוטוקול DeFi X"</div>
+                    <div>יוצר: סרן פניקס-1א1 (מקביל למנכ״ל)</div>
+                    <div>שווי כולל: 50,000 VGRD | דדליין: 14 יום</div>
+                    <div>נאמנות: כספים נעולים ב-BountyEscrow.sol</div>
+                </div>
+
+                <div class="mt-6 grid md:grid-cols-3 gap-4 text-sm">
+                    <div class="p-4 bg-black/40 rounded border-l-2 border-vanguard-cyan lang-en active">
+                        <div class="text-vanguard-cyan font-bold mb-1">Smart Contract Audit</div>
+                        <div class="text-gray-400">25,000 VGRD</div>
+                        <div class="text-gray-600 text-xs mt-1">2nd Platoon • 60% Complete</div>
+                    </div>
+                    <div class="p-4 bg-black/40 rounded border-l-2 border-vanguard-cyan lang-he hebrew-text text-right border-l-0 border-r-2">
+                        <div class="text-vanguard-cyan font-bold mb-1">ביקורת חוזים חכמים</div>
+                        <div class="text-gray-400">25,000 VGRD</div>
+                        <div class="text-gray-600 text-xs mt-1">הפלוגה ה-2 • 60% הושלם</div>
+                    </div>
+
+                    <div class="p-4 bg-black/40 rounded border-l-2 border-gray-600 lang-en active">
+                        <div class="text-gray-300 font-bold mb-1">Tokenomics Analysis</div>
+                        <div class="text-gray-400">15,000 VGRD</div>
+                        <div class="text-gray-600 text-xs mt-1">1st Platoon • 40% Complete</div>
+                    </div>
+                    <div class="p-4 bg-black/40 rounded border-l-2 border-gray-600 lang-he hebrew-text text-right border-l-0 border-r-2">
+                        <div class="text-gray-300 font-bold mb-1">ניתוח טוקנומיקס</div>
+                        <div class="text-gray-400">15,000 VGRD</div>
+                        <div class="text-gray-600 text-xs mt-1">הפלוגה ה-1 • 40% הושלם</div>
+                    </div>
+
+                    <div class="p-4 bg-black/40 rounded border-l-2 border-vanguard-emerald lang-en active">
+                        <div class="text-vanguard-emerald font-bold mb-1">Team Background</div>
+                        <div class="text-gray-400">10,000 VGRD</div>
+                        <div class="text-gray-500 text-xs mt-1 flex items-center gap-1">
+                            <span class="text-vanguard-emerald">✓</span> Completed
+                        </div>
+                    </div>
+                    <div class="p-4 bg-black/40 rounded border-l-2 border-vanguard-emerald lang-he hebrew-text text-right border-l-0 border-r-2">
+                        <div class="text-vanguard-emerald font-bold mb-1">בדיקת רקע צוות</div>
+                        <div class="text-gray-400">10,000 VGRD</div>
+                        <div class="text-gray-500 text-xs mt-1 flex items-center justify-end gap-1">
+                            <span>הושלם</span> <span class="text-vanguard-emerald">✓</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Use Cases -->
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <h3 class="text-white font-bold text-lg flex items-center gap-2 lang-en active">
+                        <span class="w-6 h-6 rounded bg-vanguard-cyan/20 text-vanguard-cyan flex items-center justify-center text-xs font-mono">01</span>
+                        Research & Analysis Syndicate
+                    </h3>
+                    <h3 class="text-white font-bold text-lg flex items-center justify-end gap-2 lang-he hebrew-text text-right">
+                        שידור מחקר וניתוח
+                        <span class="w-6 h-6 rounded bg-vanguard-cyan/20 text-vanguard-cyan flex items-center justify-center text-xs font-mono">01</span>
+                    </h3>
+                    
+                    <p class="text-sm text-gray-400 leading-relaxed lang-en active">
+                        Research desks without Bloomberg terminals. CPT creates bounty: "Comprehensive DeFi Yield Analysis Q1 2026." Platoons compete for objective assignments. Revenue flows back as new bounties.
+                    </p>
+                    <p class="text-sm text-gray-400 leading-relaxed lang-he hebrew-text text-right">
+                        שולחנות מחקר ללא מסופי בלומברג. סרן יוצר באונטי: "ניתוח תשואות DeFi מקיף Q1 2026". פלוגות מתחרות על משימות. הכנסות חוזרות כבאונטיז חדשים.
+                    </p>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="text-white font-bold text-lg flex items-center gap-2 lang-en active">
+                        <span class="w-6 h-6 rounded bg-vanguard-cyan/20 text-vanguard-cyan flex items-center justify-center text-xs font-mono">02</span>
+                        Due Diligence as a Service
+                    </h3>
+                    <h3 class="text-white font-bold text-lg flex items-center justify-end gap-2 lang-he hebrew-text text-right">
+                        בדיקת נאותות כשירות
+                        <span class="w-6 h-6 rounded bg-vanguard-cyan/20 text-vanguard-cyan flex items-center justify-center text-xs font-mono">02</span>
+                    </h3>
+                    
+                    <p class="text-sm text-gray-400 leading-relaxed lang-en active">
+                        VCs deposit bounty: "Full DD on Protocol X." Smart contract audit squad, tokenomics squad, and team research squad work in parallel. Deliverables submitted to IPFS, hashed on-chain.
+                    </p>
+                    <p class="text-sm text-gray-400 leading-relaxed lang-he hebrew-text text-right">
+                        קרנות מפקידות באונטי: "DD מלא על פרוטוקל X". צוותי ביקורת חוזים, טוקנומיקס ומחקר רקע עובדים במקביל. תוצרים מוגשים ל-IPFS, hashed על הבלוקצ'יין.
+                    </p>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="text-white font-bold text-lg flex items-center gap-2 lang-en active">
+                        <span class="w-6 h-6 rounded bg-vanguard-cyan/20 text-vanguard-cyan flex items-center justify-center text-xs font-mono">03</span>
+                        Protocol M&A Advisory
+                    </h3>
+                    <h3 class="text-white font-bold text-lg flex items-center justify-end gap-2 lang-he hebrew-text text-right">
+                        ייעוץ M&A (מיזוגים ורכישות)
+                        <span class="w-6 h-6 rounded bg-vanguard-cyan/20 text-vanguard-cyan flex items-center justify-center text-xs font-mono">03</span>
+                    </h3>
+                    
+                    <p class="text-sm text-gray-400 leading-relaxed lang-en active">
+                        DAOs acquiring other DAOs. Protocols merging. Company-level units run the process: valuation, negotiation support, integration planning. Success fee structured as bounty completion.
+                    </p>
+                    <p class="text-sm text-gray-400 leading-relaxed lang-he hebrew-text text-right">
+                        DAOs רוכשות DAOs אחרים. פרוטוקולים מתמזגים. יחידות רמת פלוגה מנהלות את התהליך: הערכה, תמיכה במו"מ, תכנון אינטגרציה. עמלת הצלחה מובנית כהשלמת באונטי.
+                    </p>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="text-white font-bold text-lg flex items-center gap-2 lang-en active">
+                        <span class="w-6 h-6 rounded bg-vanguard-cyan/20 text-vanguard-cyan flex items-center justify-center text-xs font-mono">04</span>
+                        Market Making Operations
+                    </h3>
+                    <h3 class="text-white font-bold text-lg flex items-center justify-end gap-2 lang-he hebrew-text text-right">
+                        פעילות יצירת שוק
+                        <span class="w-6 h-6 rounded bg-vanguard-cyan/20 text-vanguard-cyan flex items-center justify-center text-xs font-mono">04</span>
+                    </h3>
+                    
+                    <p class="text-sm text-gray-400 leading-relaxed lang-en active">
+                        Treasury allocates capital to trading bounties. Quantitative squads develop strategies. Execution tasks managed on-chain. P&L attributed to contributing units. Variable costs, aligned incentives.
+                    </p>
+                    <p class="text-sm text-gray-400 leading-relaxed lang-he hebrew-text text-right">
+                        האוצר מקצה הון לבאונטיז מסחר. צוותים קואנטיים מפתחים אסטרטגיות. משימות ביצוע מנוהלות על-שרשרת. רווח והפסד משויכים ליחידות תורמות. עלויות משתנות, תמריצים מיושרים.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Governance & Treasury -->
+    <section class="py-20 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-12">
+                <div>
+                    <h2 class="font-serif text-3xl font-bold text-white mb-6 lang-en active">The Partnership Model</h2>
+                    <h2 class="font-serif text-3xl font-bold text-white mb-6 lang-he hebrew-text text-right">מודל השותפות</h2>
+                    
+                    <div class="space-y-4 text-gray-400 lang-en active">
+                        <p>All Captains (MDs) form the Command Staff—a closed network of proven operators who control the firm through rank-weighted voting.</p>
+                        <p>Goldman has ~400 partners out of 40,000 employees. They control the firm. Vanguard Command Staff operates the same way—except partnership is earned through verified contribution, not political maneuvering.</p>
+                    </div>
+
+                    <div class="space-y-4 text-gray-400 lang-he hebrew-text text-right">
+                        <p>כל הסרנים (מנכ״לים) יוצרים את המטה (Command Staff)—רשת סגורה של מפעילים מנוסים ששולטים בפרוטוקול דרך הצבעה משוקללת דרגות.</p>
+                        <p>לגולדמן יש ~400 שותפים מתוך 40,000 עובדים. הם שולטים בחברה. מטה ונגרד פועל באותה דרך—רק שהשותפות נרכשת דרך תרומה מאומתת, לא תמרון פוליטי.</p>
+                    </div>
+                </div>
+
+                <div class="tactical-border p-6 rounded-lg bg-vanguard-gray/10">
+                    <h3 class="text-vanguard-gold font-mono text-xs uppercase tracking-widest mb-4 lang-en active">Treasury as Balance Sheet</h3>
+                    <h3 class="text-vanguard-gold font-mono text-xs uppercase tracking-widest mb-4 lang-he hebrew-text text-right">אוצר כמאזן</h3>
+                    
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between border-b border-gray-800 pb-2 lang-en active">
+                            <span class="text-gray-400">Assets</span>
+                            <span class="text-white">VGRD, ETH Reserves, LP Positions</span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-800 pb-2 lang-he hebrew-text text-right">
+                            <span class="text-gray-400">נכסים</span>
+                            <span class="text-white">VGRD, רזרבות ETH, פוזיציות LP</span>
+                        </div>
+                        
+                        <div class="flex justify-between border-b border-gray-800 pb-2 lang-en active">
+                            <span class="text-gray-400">Deployments</span>
+                            <span class="text-white">Bounty Funding, Strategic Investments</span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-800 pb-2 lang-he hebrew-text text-right">
+                            <span class="text-gray-400">פריסות</span>
+                            <span class="text-white">מימון באונטיז, השקעות אסטרטגיות</span>
+                        </div>
+                        
+                        <div class="flex justify-between lang-en active">
+                            <span class="text-gray-400">Governance</span>
+                            <span class="text-vanguard-cyan">Rank-Weighted Voting Only</span>
+                        </div>
+                        <div class="flex justify-between lang-he hebrew-text text-right">
+                            <span class="text-gray-400">ממשל</span>
+                            <span class="text-vanguard-cyan">הצבעה משוקללת דרגות בלבד</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contract Architecture -->
+    <section class="py-20 bg-vanguard-gray/20 border-y border-gray-800 px-6">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="font-serif text-3xl font-bold text-white mb-8 lang-en active">Contract Architecture</h2>
+            <h2 class="font-serif text-3xl font-bold text-white mb-8 lang-he hebrew-text text-right">ארכיטקטורת חוזים</h2>
+            
+            <div class="font-mono text-xs md:text-sm grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-4 bg-black/40 rounded border border-gray-800 lang-en active">
+                    <div class="text-vanguard-cyan mb-1">VGRDToken.sol</div>
+                    <div class="text-gray-500">1B supply ERC-20, snapshot, permit</div>
+                </div>
+                <div class="p-4 bg-black/40 rounded border border-gray-800 lang-he hebrew-text text-right">
+                    <div class="text-vanguard-cyan mb-1">VGRDToken.sol</div>
+                    <div class="text-gray-500">ERC-20 עם אספקה של 1B, snapshot, permit</div>
+                </div>
+
+                <div class="p-4 bg-black/40 rounded border border-gray-800 lang-en active">
+                    <div class="text-vanguard-cyan mb-1">ArmyRegistry.sol</div>
+                    <div class="text-gray-500">Soldiers, units, callsigns, hierarchy</div>
+                </div>
+                <div class="p-4 bg-black/40 rounded border border-gray-800 lang-he hebrew-text text-right">
+                    <div class="text-vanguard-cyan mb-1">ArmyRegistry.sol</div>
+                    <div class="text-gray-500">חיילים, יחידות, קודנשמות, היררכיה</div>
+                </div>
+
+                <div class="p-4 bg-black/40 rounded border border-gray-800 lang-en active">
+                    <div class="text-vanguard-cyan mb-1">RankManager.sol</div>
+                    <div class="text-gray-500">Promotions, multipliers, authority</div>
+                </div>
+                <div class="p-4 bg-black/40 rounded border border-gray-800 lang-he hebrew-text text-right">
+                    <div class="text-vanguard-cyan mb-1">RankManager.sol</div>
+                    <div class="text-gray-500">קידומים, מכפילים, סמכות</div>
+                </div>
+
+                <div class="p-4 bg-black/40 rounded border border-gray-800 lang-en active">
+                    <div class="text-vanguard-cyan mb-1">BountyEscrow.sol</div>
+                    <div class="text-gray-500">Funding, escrow, release</div>
+                </div>
+                <div class="p-4 bg-black/40 rounded border border-gray-800 lang-he hebrew-text text-right">
+                    <div class="text-vanguard-cyan mb-1">BountyEscrow.sol</div>
+                    <div class="text-gray-500">מימון, נאמנות, שחרור</div>
+                </div>
+            </div>
+
+            <div class="mt-12 text-center">
+                <div class="inline-block p-6 gold-border rounded-lg bg-vanguard-gold/5">
+                    <div class="text-vanguard-gold font-serif text-xl font-bold mb-2 lang-en active">The Soldiers Are The Bank</div>
+                    <div class="text-vanguard-gold font-serif text-xl font-bold mb-2 lang-he hebrew-text">החיילים הם הבנק</div>
+                    
+                    <p class="text-gray-400 text-sm max-w-md lang-en active">
+                        Every analyst building a model, every auditor reviewing a contract—they're not employees, they're owners, earning rank and equity through contribution.
+                    </p>
+                    <p class="text-gray-400 text-sm max-w-md lang-he hebrew-text">
+                        כל אנליסט שבונה מודל, כל מבקר שבודק חוזה—הם לא עובדים, הם בעלים, שמרוויחים דרגות ושוויון דרך תרומה.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 border-t border-gray-800 bg-vanguard-black">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-2">
+                <div class="w-6 h-6 bg-gradient-to-br from-vanguard-cyan to-vanguard-gold rounded-sm opacity-50"></div>
+                <span class="font-serif text-lg font-bold text-gray-500">VANGUARD DAO</span>
+            </div>
+            
+            <div class="flex gap-8 text-xs text-gray-600 font-mono lang-en active">
+                <a href="#" class="hover:text-vanguard-cyan transition-colors">Documentation</a>
+                <a href="#" class="hover:text-vanguard-cyan transition-colors">GitHub</a>
+                <a href="#" class="hover:text-vanguard-cyan transition-colors">Etherscan</a>
+                <a href="#" class="hover:text-vanguard-cyan transition-colors">Discord</a>
+            </div>
+
+            <div class="flex gap-8 text-xs text-gray-600 font-mono lang-he hebrew-text">
+                <a href="#" class="hover:text-vanguard-cyan transition-colors">תיעוד</a>
+                <a href="#" class="hover:text-vanguard-cyan transition-colors">גיטהאב</a>
+                <a href="#" class="hover:text-vanguard-cyan transition-colors">איתרסקן</a>
+                <a href="#" class="hover:text-vanguard-cyan transition-colors">דיסקורד</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleLanguage() {
+            const body = document.getElementById('appBody');
+            const enElements = document.querySelectorAll('.lang-en');
+            const heElements = document.querySelectorAll('.lang-he');
+            const isHebrew = body.getAttribute('dir') === 'rtl';
+            
+            if (isHebrew) {
+                // Switch to English
+                body.setAttribute('dir', 'ltr');
+                body.setAttribute('lang', 'en');
+                enElements.forEach(el => el.classList.add('active'));
+                heElements.forEach(el => el.classList.remove('active'));
+            } else {
+                // Switch to Hebrew
+                body.setAttribute('dir', 'rtl');
+                body.setAttribute('lang', 'he');
+                enElements.forEach(el => el.classList.remove('active'));
+                heElements.forEach(el => el.classList.add('active'));
+            }
+        }
+    </script>
+</body>
+</html>

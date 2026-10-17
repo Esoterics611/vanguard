@@ -1,0 +1,209 @@
+{
+  "steps": [
+    {
+      "id": "fund-a",
+      "actor": "command",
+      "label": "Fund analyst A with test ETH for gas",
+      "tx": "0x2f818c68f335b329fa98086c1643c89b6e072a77109fd97011438e18952893d5",
+      "block": 48192992,
+      "gasUsed": "21000"
+    },
+    {
+      "id": "fund-b",
+      "actor": "command",
+      "label": "Fund analyst B with test ETH for gas",
+      "tx": "0x5caca1a97319ef6f078368f342c108fff4ac18666254e4d88dbd2f66d49bbb10",
+      "block": 48192993,
+      "gasUsed": "21000"
+    },
+    {
+      "id": "enlist-a",
+      "actor": "analystA",
+      "label": "Analyst A enlists in Alpha Squad",
+      "tx": "0x475de8905aa5fd887e83d2ce32d3b17ce904aeb9dbe1e8980260a537dcf49aae",
+      "block": 48192995,
+      "gasUsed": "219200"
+    },
+    {
+      "id": "enlist-b",
+      "actor": "analystB",
+      "label": "Analyst B enlists in Alpha Squad",
+      "tx": "0x82f4e077ed05d9f99f998e9d3d7e6b59d24f0837a366f90c4087f873738f6973",
+      "block": 48192996,
+      "gasUsed": "167900"
+    },
+    {
+      "id": "promote-b",
+      "actor": "command",
+      "label": "Command promotes analyst B to Private First Class (1.5x)",
+      "tx": "0xcc97d2d43f947158b09671acd3f47b02ee9fd791188cf2ef49c65bcd76b832e9",
+      "block": 48192998,
+      "gasUsed": "65531"
+    },
+    {
+      "id": "approve-escrow",
+      "actor": "command",
+      "label": "Command approves escrow to hold the bounty",
+      "tx": "0x7a9a1587ab630b15f3fccaa5650b5d8406e0483a609372d5d556339f49b389fd",
+      "block": 48192999,
+      "gasUsed": "46053"
+    },
+    {
+      "id": "create-bounty",
+      "actor": "command",
+      "label": "Bounty: due diligence on Protocol X, 2,000 VGRD locked in escrow",
+      "tx": "0xb24c3582e14526cbbd70eaafa9576527dc886d9264b784b44e12c3225cd8a709",
+      "block": 48193000,
+      "gasUsed": "217935"
+    },
+    {
+      "id": "create-objective",
+      "actor": "command",
+      "label": "Objective assigned to Alpha Squad",
+      "tx": "0xacabba5a333b41b8393317a669729f21c3e6e0c2ad0958c14b9bb24d67c15462",
+      "block": 48193002,
+      "gasUsed": "168243"
+    },
+    {
+      "id": "link-objective",
+      "actor": "command",
+      "label": "Objective linked to the bounty",
+      "tx": "0x5ec713b1232c072fec71ab08267f56ba5ff5bf033ec07f2671937c0828029136",
+      "block": 48193005,
+      "gasUsed": "71205"
+    },
+    {
+      "id": "task-audit",
+      "actor": "command",
+      "label": "Task: smart-contract audit, base reward 1,000 VGRD",
+      "tx": "0x4bb9272eaa146c94d2f15d9008e50c96d8853ca60973eb044729c6df5e0aa0c2",
+      "block": 48193006,
+      "gasUsed": "177236"
+    },
+    {
+      "id": "task-tokenomics",
+      "actor": "command",
+      "label": "Task: tokenomics review, base reward 1,000 VGRD",
+      "tx": "0x77307fbb320919328eb775f2916ade0e05e54961480686e111aac883c8f6f9e6",
+      "block": 48193008,
+      "gasUsed": "160136"
+    },
+    {
+      "id": "assign-audit",
+      "actor": "command",
+      "label": "Audit assigned to analyst A",
+      "tx": "0x4f919a89abbf05746c944dc7b5f693f63494f748ea2b0b1680453416b1ec3857",
+      "block": 48193009,
+      "gasUsed": "144224"
+    },
+    {
+      "id": "assign-tokenomics",
+      "actor": "command",
+      "label": "Tokenomics assigned to analyst B",
+      "tx": "0xc0a1c1e8c5cfb15ad15f113b326b98692d9b385fdf5960daa1835f886afb8a95",
+      "block": 48193060,
+      "gasUsed": "144236"
+    },
+    {
+      "id": "submit-audit",
+      "actor": "analystA",
+      "label": "Analyst A submits the audit memo fingerprint",
+      "tx": "0x5306f746607fbc9816aeb6492dbf65515b26b3265f13b38e117614f4624ad9c5",
+      "block": 48193062,
+      "gasUsed": "57270"
+    },
+    {
+      "id": "submit-tokenomics",
+      "actor": "analystB",
+      "label": "Analyst B submits the tokenomics memo fingerprint",
+      "tx": "0x53ab09a3ac8a9732707da0f76739db43a30086e95fe49f7d53aca0be7ba84d76",
+      "block": 48193064,
+      "gasUsed": "57270"
+    },
+    {
+      "id": "grant-rewardpool",
+      "actor": "command",
+      "label": "Fix: let the reward pool record completed tasks in the registry",
+      "tx": "0xea5ff11cf44f2768ca3a4292379ea9427833b4b37f59ef535cc71a251792abf4",
+      "block": 48193066,
+      "gasUsed": "51237"
+    },
+    {
+      "id": "approve-audit",
+      "actor": "command",
+      "label": "Leader approves the audit: paid 1,000 x 1.0",
+      "tx": "0x112dbb66adc024770736def98d90ce562ea18b0550e9fe52f372d5fe159c51db",
+      "block": 48193067,
+      "gasUsed": "205311"
+    },
+    {
+      "id": "approve-tokenomics",
+      "actor": "command",
+      "label": "Leader approves the tokenomics review: paid 1,000 x 1.5",
+      "tx": "0xc87ba3bea2110bf208f82a6cf25c797fe9d53171a22ecb918937f6857404afb2",
+      "block": 48193068,
+      "gasUsed": "177393"
+    },
+    {
+      "id": "release-escrow",
+      "actor": "command",
+      "label": "Escrow releases the 2,000 VGRD and the bounty closes",
+      "tx": "0x08715bc5ef4e13eb6c825be605beed6b2424ceeb014829c6fd291b5fd3027acd",
+      "block": 48193070,
+      "gasUsed": "116650"
+    },
+    {
+      "id": "claim-a",
+      "actor": "analystA",
+      "label": "Analyst A claims rewards",
+      "tx": "0xe14857308d26d38137803dfcc4d32e3afe85e98db366059b3bc7ea8c23fb33ae",
+      "block": 48193071,
+      "gasUsed": "87201"
+    },
+    {
+      "id": "claim-b",
+      "actor": "analystB",
+      "label": "Analyst B claims rewards",
+      "tx": "0xb16e9133dd13acde8db991a7959c78a270541a618cc0068106c98669386472cf",
+      "block": 48193073,
+      "gasUsed": "70101"
+    }
+  ],
+  "actors": {
+    "command": "0x41521c37dB02956185437C4e2461261A321073E1",
+    "analystA": "0x4b9292835b9c0831d1CFd1f49061005b87BAc7c5",
+    "analystB": "0xEDcC4BBD60386361eC0CB50ADDf6A8843B601514"
+  },
+  "deliverables": {
+    "audit": "0xbdc0ecb3172b6dc092dffd51fa9737c94b45397ec372c5193edd0b7b3aa4a967",
+    "tokenomics": "0x3ae16f17de686c80e86b8f9dc35b2b8a3bcf263633334968527d7aab9c6011d1"
+  },
+  "bountyId": "1",
+  "objectiveId": "1",
+  "tasks": {
+    "audit": "1",
+    "tokenomics": "2"
+  },
+  "final": {
+    "analystA": {
+      "rank": "1",
+      "vgrd": "1000.0",
+      "tasksCompleted": "1",
+      "callsign": "0x71d4a260d86f1f01af4986260559737a5ed601cea0c8416f67af5516243ede23"
+    },
+    "analystB": {
+      "rank": "3",
+      "vgrd": "1500.0",
+      "tasksCompleted": "1",
+      "callsign": "0x4b0036fc46985d442a64f0ecb38c5350b6999c2a0d1202902d265ea563417178"
+    },
+    "bounty": {
+      "status": "1",
+      "remaining": "0.0"
+    },
+    "objectiveProgress": [
+      "2",
+      "2"
+    ]
+  }
+}

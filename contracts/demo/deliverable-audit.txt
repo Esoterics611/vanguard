@@ -1,0 +1,1 @@
+Protocol X smart-contract audit memo. Scope: Vault.sol, Router.sol. Findings: 0 critical, 1 medium (re-entrancy guard missing on withdrawAll), 2 low. Recommendation: fix medium before launch.

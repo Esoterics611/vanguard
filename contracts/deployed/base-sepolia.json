@@ -1,0 +1,17 @@
+{
+  "network": "baseSepolia",
+  "chainId": 84532,
+  "deployer": "0x41521c37dB02956185437C4e2461261A321073E1",
+  "attestationSigner": "0x41521c37dB02956185437C4e2461261A321073E1",
+  "deployedAt": "2026-04-27T16:59:12.274Z",
+  "addresses": {
+    "VGRDToken": "0x2Ef78A107b20eb4263448e70E643bA9621657493",
+    "Treasury": "0x55B811D87CFBbb149ea436BD5F57671602D91d54",
+    "ArmyRegistry": "0xBf3BEE33090fb5f9b147a72cAac6f4f44CE1F270",
+    "RankManager": "0xcbB1fB5E862D7e339619B55fE2E58dA6f35bc0f2",
+    "RewardPool": "0x840E56bAA0774b41eec0448F81a802281799429C",
+    "TaskRegistry": "0xd5832E767C76FbCBbee6F071b80B7F78Ad5F7e5A",
+    "BountyEscrow": "0x19F1A7F9d4A3d36BEAF2e4fb5A5E42F3f080B143",
+    "VanguardDAO": "0x1F6FB4dB93691747420d0fb9d397E4f97443A7Af"
+  }
+}

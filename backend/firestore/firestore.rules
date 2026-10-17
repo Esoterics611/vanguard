@@ -1,0 +1,106 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ============ HELPER FUNCTIONS ============
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isSoldier() {
+      return isAuthenticated() && exists(/databases/$(database)/documents/soldiers/$(request.auth.uid));
+    }
+
+    function getSoldier() {
+      return get(/databases/$(database)/documents/soldiers/$(request.auth.uid)).data;
+    }
+
+    function getRankIndex(rank) {
+      return rank == 'pvt' ? 1 :
+             rank == 'pv2' ? 2 :
+             rank == 'pfc' ? 3 :
+             rank == 'cpl' ? 4 :
+             rank == 'sgt' ? 5 :
+             rank == 'ssg' ? 6 :
+             rank == 'sfc' ? 7 :
+             rank == 'firstSgt' ? 8 :
+             rank == 'secondLt' ? 9 :
+             rank == 'firstLt' ? 10 :
+             rank == 'cpt' ? 11 : 0;
+    }
+
+    function isNCO() {
+      return isSoldier() && getRankIndex(getSoldier().rank) >= 5;
+    }
+
+    function isOfficer() {
+      return isSoldier() && getRankIndex(getSoldier().rank) >= 9;
+    }
+
+    function isCaptain() {
+      return isSoldier() && getSoldier().rank == 'cpt';
+    }
+
+    // ============ SOLDIERS ============
+    match /soldiers/{soldierId} {
+      allow read: if isAuthenticated();
+      allow update: if request.auth.uid == soldierId;
+      allow create, delete: if false;
+    }
+
+    // ============ UNITS ============
+    match /units/{unitId} {
+      allow read: if isAuthenticated();
+      allow write: if false;
+    }
+
+    // ============ SQUAD APPLICATIONS ============
+    match /squadApplications/{applicationId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isNCO();
+      allow delete: if false;
+    }
+
+    // ============ BOUNTIES ============
+    match /bounties/{bountyId} {
+      allow read: if isAuthenticated();
+      allow create: if isCaptain();
+      allow update: if isCaptain();
+      allow delete: if false;
+    }
+
+    // ============ TASKS ============
+    match /tasks/{taskId} {
+      allow read: if isAuthenticated();
+      allow create: if isNCO();
+      allow update: if isSoldier();
+      allow delete: if false;
+    }
+
+    // ============ CHAT CHANNELS ============
+    match /chatChannels/{channelId} {
+      allow read: if isAuthenticated();
+      allow write: if false;
+
+      match /messages/{messageId} {
+        allow read: if isAuthenticated();
+        allow create: if isSoldier() && request.resource.data.senderId == request.auth.uid;
+        allow update, delete: if false;
+      }
+    }
+
+    // ============ PROMOTIONS (AUDIT LOG) ============
+    match /promotions/{promotionId} {
+      allow read: if isNCO();
+      allow write: if false;
+    }
+
+    // ============ CALLSIGN WORDS ============
+    match /callsignWords/{wordId} {
+      allow read: if true;
+      allow write: if true;  // Allow for seeding
+    }
+  }
+}

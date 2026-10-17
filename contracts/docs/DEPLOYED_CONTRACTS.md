@@ -1,0 +1,50 @@
+# Vanguard Contracts - Base Sepolia Deployment
+
+**Network:** Base Sepolia (Chain ID: 84532)
+**Deployer:** 0x41521c37dB02956185437C4e2461261A321073E1
+**Deployment Date:** 2026-02-03T17:58:04.198Z
+
+## Contract Addresses
+
+| Contract | Address |
+|----------|---------|
+| VGRDToken | `0x4B2B2b8eA2B9d2f25D91c4B4B093259d17AAe243` |
+| Treasury | `0x1F1fA66C95c00DE39040E2c6E9D4cb29c8bB43d5` |
+| ArmyRegistry | `0x27142bF1E74ca41823753CEe4e8BdD429Ed0c93C` |
+| RankManager | `0x6B2fE8E509Dd190A1A600E80b580f66B93B8933D` |
+| RewardPool | `0x6AD373B7864d2e94Dc13EF1126aBA0DF8220Ac30` |
+| TaskRegistry | `0x9F65Dd439B9c0E1Ce3C5c996928eCEcEa4A7A504` |
+| BountyEscrow | `0x1E94a235741C4c960C73c0F32984aFd41F285A0a` |
+| VanguardDAO | `0x8A87DB4C14b2272917A3237cB73baffe56dAD3F2` |
+
+## Block Explorer Links
+
+- VGRDToken: https://sepolia.basescan.org/address/0x4B2B2b8eA2B9d2f25D91c4B4B093259d17AAe243
+- Treasury: https://sepolia.basescan.org/address/0x1F1fA66C95c00DE39040E2c6E9D4cb29c8bB43d5
+- ArmyRegistry: https://sepolia.basescan.org/address/0x27142bF1E74ca41823753CEe4e8BdD429Ed0c93C
+- RankManager: https://sepolia.basescan.org/address/0x6B2fE8E509Dd190A1A600E80b580f66B93B8933D
+- RewardPool: https://sepolia.basescan.org/address/0x6AD373B7864d2e94Dc13EF1126aBA0DF8220Ac30
+- TaskRegistry: https://sepolia.basescan.org/address/0x9F65Dd439B9c0E1Ce3C5c996928eCEcEa4A7A504
+- BountyEscrow: https://sepolia.basescan.org/address/0x1E94a235741C4c960C73c0F32984aFd41F285A0a
+- VanguardDAO: https://sepolia.basescan.org/address/0x8A87DB4C14b2272917A3237cB73baffe56dAD3F2
+
+## Token Distribution
+
+| Allocation | Amount | Recipient |
+|------------|--------|-----------|
+| Reward Pool | 400,000,000 VGRD (40%) | RewardPool Contract |
+| Treasury | 250,000,000 VGRD (25%) | Treasury Contract |
+| Team/Founders/Liquidity | 350,000,000 VGRD (35%) | Deployer Wallet |
+
+## Verification Commands
+
+```bash
+npx hardhat verify --network baseSepolia 0x4B2B2b8eA2B9d2f25D91c4B4B093259d17AAe243 "0x41521c37dB02956185437C4e2461261A321073E1"
+npx hardhat verify --network baseSepolia 0x1F1fA66C95c00DE39040E2c6E9D4cb29c8bB43d5 "0x41521c37dB02956185437C4e2461261A321073E1"
+npx hardhat verify --network baseSepolia 0x27142bF1E74ca41823753CEe4e8BdD429Ed0c93C "0x41521c37dB02956185437C4e2461261A321073E1"
+npx hardhat verify --network baseSepolia 0x6B2fE8E509Dd190A1A600E80b580f66B93B8933D "0x41521c37dB02956185437C4e2461261A321073E1" "0x27142bF1E74ca41823753CEe4e8BdD429Ed0c93C"
+npx hardhat verify --network baseSepolia 0x6AD373B7864d2e94Dc13EF1126aBA0DF8220Ac30 "0x41521c37dB02956185437C4e2461261A321073E1" "0x4B2B2b8eA2B9d2f25D91c4B4B093259d17AAe243" "0x27142bF1E74ca41823753CEe4e8BdD429Ed0c93C" "0x6B2fE8E509Dd190A1A600E80b580f66B93B8933D"
+npx hardhat verify --network baseSepolia 0x9F65Dd439B9c0E1Ce3C5c996928eCEcEa4A7A504 "0x41521c37dB02956185437C4e2461261A321073E1" "0x27142bF1E74ca41823753CEe4e8BdD429Ed0c93C" "0x6B2fE8E509Dd190A1A600E80b580f66B93B8933D"
+npx hardhat verify --network baseSepolia 0x1E94a235741C4c960C73c0F32984aFd41F285A0a "0x41521c37dB02956185437C4e2461261A321073E1" "0x4B2B2b8eA2B9d2f25D91c4B4B093259d17AAe243" "0x27142bF1E74ca41823753CEe4e8BdD429Ed0c93C"
+npx hardhat verify --network baseSepolia 0x8A87DB4C14b2272917A3237cB73baffe56dAD3F2 "0x41521c37dB02956185437C4e2461261A321073E1" "0x4B2B2b8eA2B9d2f25D91c4B4B093259d17AAe243" "0x27142bF1E74ca41823753CEe4e8BdD429Ed0c93C" "0x6B2fE8E509Dd190A1A600E80b580f66B93B8933D"
+```

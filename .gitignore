@@ -1,0 +1,98 @@
+# ============================================
+# Vanguard DAO Monorepo
+# ============================================
+
+# Chayolei is a separate repository
+/chayolei/
+
+# Dependencies
+node_modules/
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+
+# IDE / Editor
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.cursor/
+
+# OS
+.DS_Store
+Thumbs.db
+nul
+
+# Claude Code
+.claude/
+
+# Large binary/generated assets (keep in cloud storage, not git)
+*.pdf
+docs/assets/*.html
+docs/assets/*.docx
+
+# ============================================
+# Flutter / Dart (root-level app)
+# ============================================
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+**/doc/api/
+**/ios/Flutter/.last_build_id
+app.*.symbols
+app.*.map.json
+/android/app/debug
+/android/app/profile
+/android/app/release
+*.class
+*.pyc
+*.swp
+
+# ============================================
+# Smart Contracts (contracts/)
+# ============================================
+contracts/node_modules/
+contracts/artifacts/
+contracts/cache/
+contracts/typechain-types/
+contracts/coverage/
+
+# ============================================
+# Web UI (vanguard-ui/)
+# ============================================
+vanguard-ui/node_modules/
+vanguard-ui/.svelte-kit/
+vanguard-ui/build/
+
+# ============================================
+# Backend (backend/)
+# ============================================
+backend/functions/node_modules/
+backend/functions/lib/
+backend/functions/.git_disabled/
+
+# ============================================
+# Firebase
+# ============================================
+.firebase/
+*-debug.log
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# ============================================
+# Logs
+# ============================================
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# Local tooling state
+.claude/settings.local.json
+tmpclaude-*
