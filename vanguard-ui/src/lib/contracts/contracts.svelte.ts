@@ -8,7 +8,7 @@
 // (we keep the full Hardhat artifact and read .abi at construction time)
 // ═══════════════════════════════════════════════════════════════
 
-import { Contract, type ContractRunner, type InterfaceAbi } from 'ethers';
+import { Contract, Interface, type ContractRunner, type InterfaceAbi } from 'ethers';
 import { addresses } from './addresses';
 
 import VGRDTokenArtifact from './abis/VGRDToken.json';
@@ -33,6 +33,12 @@ const abis = {
 	TaskRegistry: (TaskRegistryArtifact as HardhatArtifact).abi,
 	BountyEscrow: (BountyEscrowArtifact as HardhatArtifact).abi,
 	VanguardDAO: (VanguardDAOArtifact as HardhatArtifact).abi,
+} as const;
+
+/** Encoders for calls sent in batches (see batch.svelte.ts). */
+export const encoders = {
+	TaskRegistry: new Interface(abis.TaskRegistry),
+	RankManager: new Interface(abis.RankManager),
 } as const;
 
 export function getVGRDToken(runner: ContractRunner): Contract {

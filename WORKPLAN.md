@@ -43,7 +43,6 @@ The student's path: **invite link → wallet → Base Sepolia → test ETH for f
 | [x] | Demo mode (`/join?demo=1`): a simulated wallet and chain to click through the whole student path before the cohort exists on chain, including a simulated instructor who approves, pays and promotes | `vanguard-ui/src/lib/demo/` |
 | [ ] | **Merge to `main` to publish the site.** Optional: a custom domain (Settings → Pages); the build adapts to it automatically | |
 | [ ] | Seed the callsign words on chain (section 2) before the first student enlists; until then callsigns show as `RECRUIT-XXXX` | |
-| [ ] | Hebrew edition of `/join` and `/academy` (the landing site and the flagship course are bilingual) | |
 | [ ] | Intake: an application form link in the cohort definition for now; Firebase `reviewApplication` flow later | `cohorts.ts` `intakeUrl` |
 | [ ] | Landing site: replace the dead "Enlist your formation" form with a "Join cohort 1" button to `/join` | `vanguard-site/index.html` |
 | [ ] | Fees without a faucet: smart wallet plus a paymaster so students never need test ETH | |
@@ -103,9 +102,9 @@ Bundle these, redeploy once with the multisig as admin and a separate signer, th
 ## Decisions waiting on the owner
 
 1. **Where the web app lives:** GitHub Pages is wired up and works now; a custom domain or another host (Vercel, Netlify, Firebase) only needs the build command in `vanguard-ui/README.md`.
-2. **Hebrew:** should onboarding ship in Hebrew too, and for cohort 1?
-3. **Cohort 1 details:** dates, size, instructor(s) and their wallet addresses, intake form link. Placeholders are in `cohorts.ts`.
-4. **Coursework pay:** zero, or a small test-VGRD reward per assignment.
+2. ~~Hebrew~~ **Decided 2026-10-26:** no Hebrew edition for the cohorts.
+3. **Cohort 1 details:** starts **Wed 11 Nov 2026** (decided; in `cohorts.ts`). Still open: size, instructor(s) and their wallet addresses, intake form link.
+4. ~~Coursework pay~~ **Decided 2026-10-26:** coursework is paid. Default 100 test VGRD per approved assignment, times the student's rank multiplier (`assignmentReward` in `cohorts.ts`; the instructor can change it per week).
 5. **Rank numbers:** one table for pay and votes; which is right, the docs or the contract?
 6. **Real money** (stipends, client bounties): needs the legal entity first.
 

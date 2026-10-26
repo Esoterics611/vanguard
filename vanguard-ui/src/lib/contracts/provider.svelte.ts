@@ -96,6 +96,13 @@ class WalletStore {
 		return this.#getEthereum() !== null;
 	}
 
+	/** A raw request to the browser wallet, for calls ethers doesn't wrap (EIP-5792 batches). */
+	async request<T>(method: string, params: unknown[] = []): Promise<T> {
+		const eth = this.#getEthereum();
+		if (!eth) throw new Error('No browser wallet detected.');
+		return eth.request<T>({ method, params });
+	}
+
 	/** Reconnect silently if this site was already authorised in the wallet. */
 	async restore(): Promise<void> {
 		const eth = this.#getEthereum();

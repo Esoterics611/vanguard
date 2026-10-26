@@ -281,3 +281,54 @@ export function formatToken(wei: bigint, digits = 2): string {
 export function formatMultiplier(bps: number): string {
 	return `${(bps / 100).toFixed(bps % 10 === 0 ? 1 : 2)}×`;
 }
+
+// ── Roles and promotions ───────────────────────────────────────
+
+/** keccak256("DAO_ROLE"): command's role on TaskRegistry and RankManager. */
+export const DAO_ROLE = keccak256(toUtf8Bytes('DAO_ROLE'));
+
+export interface Roles {
+	/** Can create, assign and review work in any unit. */
+	taskAdmin: boolean;
+	/** Can promote anyone to any rank and record training (daoPromote, completePLDC). */
+	rankAdmin: boolean;
+}
+
+export async function loadRoles(address: string): Promise<Roles> {
+	const p = await readProvider();
+	const [taskAdmin, rankAdmin] = await Promise.all([
+		getTaskRegistry(p).hasRole(DAO_ROLE, address) as Promise<boolean>,
+		getRankManager(p).hasRole(DAO_ROLE, address) as Promise<boolean>,
+	]);
+	return { taskAdmin, rankAdmin };
+}
+
+export interface PromotionRecord {
+	/** When the member was last promoted, or null if never. */
+	lastPromotion: Date | null;
+	/** The leadership course (PLDC) is recorded: required for sergeant. */
+	pldc: boolean;
+	/** RankManager.canPromote(promoter, member, rank + 1); false at captain or without a promoter. */
+	canPromote: boolean;
+}
+
+export async function loadPromotionRecords(members: ChainMember[], promoter: string | null): Promise<Map<string, PromotionRecord>> {
+	const rankManager = getRankManager(await readProvider());
+	const records = await Promise.all(
+		members.map(async (m) => {
+			const next = m.rankIndex + 1;
+			const [last, pldc, can] = await Promise.all([
+				rankManager.lastPromotionTime(m.address) as Promise<bigint>,
+				rankManager.hasCompletedPLDC(m.address) as Promise<boolean>,
+				promoter && next <= 11 ? (rankManager.canPromote(promoter, m.address, next) as Promise<boolean>) : false,
+			]);
+			return [m.address.toLowerCase(), { lastPromotion: last > 0n ? new Date(Number(last) * 1000) : null, pldc, canPromote: can }] as const;
+		})
+	);
+	return new Map(records);
+}
+
+/** Minimum time between two promotions of the same member, in seconds. */
+export async function loadPromotionCooldown(): Promise<number> {
+	return Number(await getRankManager(await readProvider()).promotionCooldown());
+}

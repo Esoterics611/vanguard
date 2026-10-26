@@ -42,6 +42,8 @@ export interface Cohort {
 	seats: number | null;
 	/** Application form, if seats are allocated by application. */
 	intakeUrl: string | null;
+	/** Base pay per approved assignment, in VGRD; the student's rank multiplier applies on top. */
+	assignmentReward: string;
 	outcomes: string[];
 	weeks: CohortWeek[];
 }
@@ -53,12 +55,14 @@ export const COHORTS: Cohort[] = [
 		track: 'DeFi investment banking',
 		pitch:
 			'Eight weeks from first principles to a live due-diligence engagement. You learn the work, do it on chain, and finish with a rank and a record anyone can check.',
-		startDate: null,
+		startDate: '2026-11-11',
 		squadId: null,
 		instructor: { name: 'To be announced', address: null },
 		seats: 25,
 		intakeUrl: null,
+		assignmentReward: '100',
 		outcomes: [
+			'Paid coursework: every approved assignment pays VGRD at your rank',
 			'A callsign and a work record on chain that anyone can verify',
 			'Rank in the guild, earned through approved work',
 			'A capstone diligence deliverable with your name on its fingerprint',

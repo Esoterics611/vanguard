@@ -68,6 +68,10 @@ class StudentStore {
 	ethBalance = $state<bigint | null>(null);
 	pendingPay = $state<bigint>(0n);
 
+	/** The connected wallet leads the cohort squad (its instructor or their second). */
+	isInstructor = $derived(
+		!!this.squad && (sameAddress(this.squad.leader, this.account) || sameAddress(this.squad.secondInCommand, this.account))
+	);
 	/** Enlisted, and in this cohort's squad. */
 	inCohort = $derived(this.member !== null && this.squad !== null && this.member.unitId === this.squad.id);
 	multiplier = $derived(this.member ? (this.multipliers[this.member.rankIndex] ?? 100) : 100);

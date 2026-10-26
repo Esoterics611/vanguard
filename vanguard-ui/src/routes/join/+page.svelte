@@ -197,6 +197,13 @@
 				>
 					Just looking? Preview the student experience with a simulated wallet <ArrowRight size={14} />
 				</a>
+				<a
+					href={resolve('/instructor') + `?cohort=${cohort.id}&demo=instructor`}
+					data-sveltekit-reload
+					class="inline-flex items-center gap-1.5 text-sm text-amber-300/90 transition-colors hover:text-amber-200"
+				>
+					Running a cohort? Preview the instructor view <ArrowRight size={14} />
+				</a>
 			{/if}
 
 			{#if validInviter && !enlistedHere}

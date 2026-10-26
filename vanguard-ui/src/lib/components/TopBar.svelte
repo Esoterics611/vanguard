@@ -8,6 +8,7 @@
 
 	const routeTitles: Partial<Record<RouteId, string>> = {
 		'/academy': 'Academy',
+		'/instructor': 'Instructor',
 		'/dashboard': 'Dashboard',
 		'/bounties': 'Bounties',
 		'/objectives': 'Objectives',
