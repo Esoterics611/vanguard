@@ -300,17 +300,17 @@
             </p>
             
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <button class="group relative px-8 py-4 bg-vanguard-cyan text-vanguard-dark font-bold rounded overflow-hidden transition-all hover:scale-105">
+                <a href="#enlist" class="group relative px-8 py-4 bg-vanguard-cyan text-vanguard-dark font-bold rounded overflow-hidden transition-all hover:scale-105">
                     <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform"></div>
-                    <span class="relative font-mono tracking-wider lang-content en active">DEPLOY YOUR FORMATION</span>
-                    <span class="relative font-mono tracking-wider lang-content he">פרוס את הכוח שלך</span>
-                </button>
-                <button class="px-8 py-4 border border-slate-700 text-slate-300 font-medium rounded hover:border-vanguard-cyan hover:text-vanguard-cyan transition-all font-mono tracking-wider lang-content en active">
+                    <span class="relative font-mono tracking-wider lang-content en active">JOIN COHORT 1</span>
+                    <span class="relative font-mono tracking-wider lang-content he">הצטרפות למחזור 1</span>
+                </a>
+                <a href="https://github.com/Esoterics611/vanguard/tree/main/docs" class="px-8 py-4 border border-slate-700 text-slate-300 font-medium rounded hover:border-vanguard-cyan hover:text-vanguard-cyan transition-all font-mono tracking-wider lang-content en active">
                     VIEW DOCUMENTATION
-                </button>
-                <button class="px-8 py-4 border border-slate-700 text-slate-300 font-medium rounded hover:border-vanguard-cyan hover:text-vanguard-cyan transition-all font-mono tracking-wider lang-content he">
+                </a>
+                <a href="https://github.com/Esoterics611/vanguard/tree/main/docs" class="px-8 py-4 border border-slate-700 text-slate-300 font-medium rounded hover:border-vanguard-cyan hover:text-vanguard-cyan transition-all font-mono tracking-wider lang-content he">
                     צפה בתיעוד
-                </button>
+                </a>
             </div>
 
             <!-- Stats Row -->
@@ -1194,130 +1194,53 @@
         </div>
     </section>
 
-    <!-- Enlistment CTA -->
+    <!-- Enlistment CTA: the academy is the way in -->
     <section id="enlist" class="py-24 relative overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-b from-vanguard-cyan/10 to-transparent"></div>
         <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%2306b6d4%22%20fill-opacity%3D%220.05%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
         
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-            <h2 class="font-serif text-5xl md:text-6xl font-bold text-white mb-6 lang-content en active">Enlist Your Formation</h2>
-            <h2 class="font-serif text-5xl md:text-6xl font-bold text-white mb-6 lang-content he">גייס את הכוח שלך</h2>
-            
+            <h2 class="font-serif text-5xl md:text-6xl font-bold text-white mb-6 lang-content en active">Join Cohort 1</h2>
+            <h2 class="font-serif text-5xl md:text-6xl font-bold text-white mb-6 lang-content he">הצטרפות למחזור 1</h2>
+
             <p class="text-xl text-slate-300 mb-12 leading-relaxed lang-content en active">
-                Have a team ready to operate? Deploy your Squad smart contract and plug into the Vanguard network. 
-                Access shared deal flow, automated treasury management, and on-chain reputation.
+                Vanguard Academy trains the guild's first members: eight weeks of DeFi investment banking, taught in English.
+                Every approved assignment pays VGRD, and your instructor promotes you as your work comes in.
             </p>
             <p class="text-xl text-slate-300 mb-12 leading-relaxed lang-content he" dir="rtl">
-                יש צוות מוכן לפעולה? פרוס את חוזה הכיתה החכם שלך והתחבר לרשת ונגרד. 
-                גישה לזרם עסקאות משותף, ניהול אוצר אוטומטי, ומוניטין על-שרשרת.
+                האקדמיה של ונגרד מכשירה את חברי הגילדה הראשונים: שמונה שבועות של בנקאות השקעות ב-DeFi. הלימודים באנגלית.
+                כל מטלה שמאושרת משולמת ב-VGRD, והמדריך מקדם אותך בדרגה לפי העבודה שלך.
             </p>
-            
+
             <div class="glass-panel rounded-2xl p-8 md:p-12 tactical-border max-w-2xl mx-auto">
-                <form class="space-y-6 text-left lang-content en active">
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-xs font-mono text-slate-400 uppercase tracking-widest mb-2">Formation Name</label>
-                            <input type="text" placeholder="e.g., Alpha Squad" class="w-full bg-vanguard-dark/50 border border-slate-700 rounded px-4 py-3 text-white placeholder-slate-600 focus:border-vanguard-cyan focus:outline-none transition-colors">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-mono text-slate-400 uppercase tracking-widest mb-2">Proposed Size</label>
-                            <select class="w-full bg-vanguard-dark/50 border border-slate-700 rounded px-4 py-3 text-white focus:border-vanguard-cyan focus:outline-none transition-colors">
-                                <option>Fire Team (3-5)</option>
-                                <option>Squad (6-12)</option>
-                                <option>Section (13-25)</option>
-                                <option>Platoon (26-50)</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-xs font-mono text-slate-400 uppercase tracking-widest mb-2">Primary Capability</label>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            <label class="flex items-center justify-center p-3 rounded border border-slate-700 cursor-pointer hover:border-vanguard-cyan/50 transition-colors has-[:checked]:border-vanguard-cyan has-[:checked]:bg-vanguard-cyan/10">
-                                <input type="radio" name="capability" class="hidden">
-                                <span class="text-sm text-slate-300">Development</span>
-                            </label>
-                            <label class="flex items-center justify-center p-3 rounded border border-slate-700 cursor-pointer hover:border-vanguard-cyan/50 transition-colors has-[:checked]:border-vanguard-cyan has-[:checked]:bg-vanguard-cyan/10">
-                                <input type="radio" name="capability" class="hidden">
-                                <span class="text-sm text-slate-300">Security</span>
-                            </label>
-                            <label class="flex items-center justify-center p-3 rounded border border-slate-700 cursor-pointer hover:border-vanguard-cyan/50 transition-colors has-[:checked]:border-vanguard-cyan has-[:checked]:bg-vanguard-cyan/10">
-                                <input type="radio" name="capability" class="hidden">
-                                <span class="text-sm text-slate-300">Design</span>
-                            </label>
-                            <label class="flex items-center justify-center p-3 rounded border border-slate-700 cursor-pointer hover:border-vanguard-cyan/50 transition-colors has-[:checked]:border-vanguard-cyan has-[:checked]:bg-vanguard-cyan/10">
-                                <input type="radio" name="capability" class="hidden">
-                                <span class="text-sm text-slate-300">Strategy</span>
-                            </label>
-                        </div>
-                    </div>
+                <div class="lang-content en active"><dl class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+                    <div><dt class="text-xs font-mono text-slate-400 uppercase tracking-widest mb-2">Starts</dt><dd class="text-white font-medium">11 Nov 2026</dd></div>
+                    <div><dt class="text-xs font-mono text-slate-400 uppercase tracking-widest mb-2">Length</dt><dd class="text-white font-medium">8 weeks</dd></div>
+                    <div><dt class="text-xs font-mono text-slate-400 uppercase tracking-widest mb-2">Seats</dt><dd class="text-white font-medium">25</dd></div>
+                    <div><dt class="text-xs font-mono text-slate-400 uppercase tracking-widest mb-2">Coursework</dt><dd class="text-white font-medium">Paid in VGRD</dd></div>
+                </dl></div>
+                <div class="lang-content he" dir="rtl"><dl class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+                    <div><dt class="text-xs font-mono text-slate-400 tracking-widest mb-2">פתיחה</dt><dd class="text-white font-medium">11 בנובמבר 2026</dd></div>
+                    <div><dt class="text-xs font-mono text-slate-400 tracking-widest mb-2">משך</dt><dd class="text-white font-medium">8 שבועות</dd></div>
+                    <div><dt class="text-xs font-mono text-slate-400 tracking-widest mb-2">מקומות</dt><dd class="text-white font-medium">25</dd></div>
+                    <div><dt class="text-xs font-mono text-slate-400 tracking-widest mb-2">מטלות</dt><dd class="text-white font-medium">בתשלום ב-VGRD</dd></div>
+                </dl></div>
 
-                    <div>
-                        <label class="block text-xs font-mono text-slate-400 uppercase tracking-widest mb-2">Wallet Address (Squad Leader)</label>
-                        <input type="text" placeholder="0x..." class="w-full bg-vanguard-dark/50 border border-slate-700 rounded px-4 py-3 text-white placeholder-slate-600 focus:border-vanguard-cyan focus:outline-none transition-colors font-mono">
-                    </div>
+                <a href="https://esoterics611.github.io/vanguard/join?cohort=cohort-1" class="block w-full py-4 bg-vanguard-cyan text-vanguard-dark font-bold rounded hover:bg-cyan-400 transition-all font-mono tracking-widest uppercase text-sm lang-content en active">
+                    Join Cohort 1
+                </a>
+                <a href="https://esoterics611.github.io/vanguard/join?cohort=cohort-1" class="block w-full py-4 bg-vanguard-cyan text-vanguard-dark font-bold rounded hover:bg-cyan-400 transition-all font-mono tracking-widest text-sm lang-content he">
+                    הצטרפות למחזור 1
+                </a>
 
-                    <button type="submit" class="w-full py-4 bg-vanguard-cyan text-vanguard-dark font-bold rounded hover:bg-cyan-400 transition-all font-mono tracking-widest uppercase text-sm">
-                        Initialize Formation Contract
-                    </button>
-                    
-                    <p class="text-xs text-slate-500 text-center">
-                        By enlisting, you agree to the Vanguard Protocol Constitution and binding arbitration smart contracts.
-                    </p>
-                </form>
-
-                <form class="space-y-6 text-right lang-content he" dir="rtl">
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-xs font-mono text-slate-400 uppercase tracking-widest mb-2">שם הכוח</label>
-                            <input type="text" placeholder="למשל: כיתת אלפא" class="w-full bg-vanguard-dark/50 border border-slate-700 rounded px-4 py-3 text-white placeholder-slate-600 focus:border-vanguard-cyan focus:outline-none transition-colors text-right">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-mono text-slate-400 uppercase tracking-widest mb-2">גודל מוצע</label>
-                            <select class="w-full bg-vanguard-dark/50 border border-slate-700 rounded px-4 py-3 text-white focus:border-vanguard-cyan focus:outline-none transition-colors">
-                                <option>צוות אש (3-5)</option>
-                                <option>כיתה (6-12)</option>
-                                <option>מדור (13-25)</option>
-                                <option>פלוגה (26-50)</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-xs font-mono text-slate-400 uppercase tracking-widest mb-2">יכולת עיקרית</label>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            <label class="flex items-center justify-center p-3 rounded border border-slate-700 cursor-pointer hover:border-vanguard-cyan/50 transition-colors has-[:checked]:border-vanguard-cyan has-[:checked]:bg-vanguard-cyan/10">
-                                <input type="radio" name="capability" class="hidden">
-                                <span class="text-sm text-slate-300">פיתוח</span>
-                            </label>
-                            <label class="flex items-center justify-center p-3 rounded border border-slate-700 cursor-pointer hover:border-vanguard-cyan/50 transition-colors has-[:checked]:border-vanguard-cyan has-[:checked]:bg-vanguard-cyan/10">
-                                <input type="radio" name="capability" class="hidden">
-                                <span class="text-sm text-slitate-300">אבטחה</span>
-                            </label>
-                            <label class="flex items-center justify-center p-3 rounded border border-slate-700 cursor-pointer hover:border-vanguard-cyan/50 transition-colors has-[:checked]:border-vanguard-cyan has-[:checked]:bg-vanguard-cyan/10">
-                                <input type="radio" name="capability" class="hidden">
-                                <span class="text-sm text-slate-300">עיצוב</span>
-                            </label>
-                            <label class="flex items-center justify-center p-3 rounded border border-slate-700 cursor-pointer hover:border-vanguard-cyan/50 transition-colors has-[:checked]:border-vanguard-cyan has-[:checked]:bg-vanguard-cyan/10">
-                                <input type="radio" name="capability" class="hidden">
-                                <span class="text-sm text-slate-300">אסטרטגיה</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-mono text-slate-400 uppercase tracking-widest mb-2">כתובת ארנק (מפקד הכיתה)</label>
-                        <input type="text" placeholder="0x..." class="w-full bg-vanguard-dark/50 border border-slate-700 rounded px-4 py-3 text-white placeholder-slate-600 focus:border-vanguard-cyan focus:outline-none transition-colors font-mono text-left" dir="ltr">
-                    </div>
-
-                    <button type="submit" class="w-full py-4 bg-vanguard-cyan text-vanguard-dark font-bold rounded hover:bg-cyan-400 transition-all font-mono tracking-widest uppercase text-sm">
-                        אתחול חוזת הכוח
-                    </button>
-                    
-                    <p class="text-xs text-slate-500 text-center">
-                        בגיוסך, אתה מסכים לחוקת פרוטוקול ונגרד ולחוזים חכמים לבוררות מחייבת.
-                    </p>
-                </form>
+                <p class="mt-6 text-sm text-slate-400 lang-content en active">
+                    Setup takes about ten minutes and costs nothing: a wallet and free test-network fees.
+                    <a href="https://esoterics611.github.io/vanguard/join?demo=1" class="text-vanguard-cyan hover:underline">Preview the course first</a>.
+                </p>
+                <p class="mt-6 text-sm text-slate-400 lang-content he" dir="rtl">
+                    ההרשמה לוקחת כעשר דקות ואינה עולה כסף: ארנק ועמלות רשת בדיקה בחינם.
+                    <a href="https://esoterics611.github.io/vanguard/join?demo=1" class="text-vanguard-cyan hover:underline">תצוגה מקדימה של הקורס</a>.
+                </p>
             </div>
         </div>
     </section>
@@ -1340,8 +1263,8 @@
                 <div>
                     <h4 class="text-white font-bold mb-4 font-mono text-sm">Protocol</h4>
                     <ul class="space-y-2 text-sm text-slate-400">
-                        <li><a href="#" class="hover:text-vanguard-cyan transition-colors">Documentation</a></li>
-                        <li><a href="#" class="hover:text-vanguard-cyan transition-colors">Smart Contracts</a></li>
+                        <li><a href="https://github.com/Esoterics611/vanguard/tree/main/docs" class="hover:text-vanguard-cyan transition-colors">Documentation</a></li>
+                        <li><a href="https://esoterics611.github.io/vanguard/live/" class="hover:text-vanguard-cyan transition-colors">Smart Contracts</a></li>
                         <li><a href="#" class="hover:text-vanguard-cyan transition-colors">Governance</a></li>
                         <li><a href="#" class="hover:text-vanguard-cyan transition-colors">Tokenomics</a></li>
                     </ul>
