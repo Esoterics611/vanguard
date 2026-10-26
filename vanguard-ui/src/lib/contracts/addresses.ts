@@ -1,8 +1,14 @@
 // ═══════════════════════════════════════════════════════════════
-// Deployed contract addresses (Base Sepolia testnet)
-// Source: contracts/deployed/base-sepolia.json
-// Last deployed: 2026-04-27 (engine + verticals refactor)
+// Where the contracts are. Read from the deployment record,
+// contracts/deployed/base-sepolia.json, so a redeploy only updates
+// that file. The record also carries each cohort's squad, written by
+// contracts/scripts/academy-setup.js.
+//
+// For rehearsals on a local chain, a build can point elsewhere:
+// VITE_DEPLOYMENT (a deployment record as JSON) and VITE_RPC_URL.
 // ═══════════════════════════════════════════════════════════════
+
+import baseSepolia from '../../../../contracts/deployed/base-sepolia.json';
 
 /** Base Sepolia testnet chain id (decimal). */
 export const BASE_SEPOLIA_CHAIN_ID = 84532;
@@ -19,6 +25,9 @@ export const BASE_SEPOLIA_RPC_URL = 'https://sepolia.base.org';
 /** Block explorer URL. */
 export const BASE_SEPOLIA_EXPLORER_URL = 'https://sepolia.basescan.org';
 
+/** RPC endpoint for reads, when a build overrides the public ones. */
+export const RPC_URL_OVERRIDE: string | null = import.meta.env.VITE_RPC_URL || null;
+
 export interface ContractAddresses {
 	VGRDToken: `0x${string}`;
 	Treasury: `0x${string}`;
@@ -30,13 +39,21 @@ export interface ContractAddresses {
 	VanguardDAO: `0x${string}`;
 }
 
-export const addresses: ContractAddresses = {
-	VGRDToken: '0x2Ef78A107b20eb4263448e70E643bA9621657493',
-	Treasury: '0x55B811D87CFBbb149ea436BD5F57671602D91d54',
-	ArmyRegistry: '0xBf3BEE33090fb5f9b147a72cAac6f4f44CE1F270',
-	RankManager: '0xcbB1fB5E862D7e339619B55fE2E58dA6f35bc0f2',
-	RewardPool: '0x840E56bAA0774b41eec0448F81a802281799429C',
-	TaskRegistry: '0xd5832E767C76FbCBbee6F071b80B7F78Ad5F7e5A',
-	BountyEscrow: '0x19F1A7F9d4A3d36BEAF2e4fb5A5E42F3f080B143',
-	VanguardDAO: '0x1F6FB4dB93691747420d0fb9d397E4f97443A7Af',
-};
+/** A cohort as set up on chain by the setup script. */
+export interface CohortRecord {
+	squadId: number;
+	instructor?: string;
+}
+
+export interface Deployment {
+	network: string;
+	chainId: number;
+	addresses: ContractAddresses;
+	academy?: Record<string, CohortRecord>;
+}
+
+export const deployment: Deployment = import.meta.env.VITE_DEPLOYMENT
+	? JSON.parse(import.meta.env.VITE_DEPLOYMENT)
+	: (baseSepolia as Deployment);
+
+export const addresses: ContractAddresses = deployment.addresses;

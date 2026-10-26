@@ -214,7 +214,8 @@
 						{cohort}
 						students={instructor.students}
 						canManage={instructor.canManage}
-						current={week === board.week.week || (week === null && board.week.week === 1 && !board.objective)}
+						current={week === board.week.week || (phase === 'upcoming' && board.week.week === 1)}
+						currentLabel={phase === 'running' ? 'This week' : 'First up'}
 						onchange={() => weekChanged(board.week.week)}
 					/>
 				{/each}

@@ -16,13 +16,13 @@ import {
 	toUtf8Bytes,
 } from 'ethers';
 import { RANKS, type Rank } from '$lib/types';
-import { BASE_SEPOLIA_CHAIN_ID } from './addresses';
+import { BASE_SEPOLIA_CHAIN_ID, RPC_URL_OVERRIDE } from './addresses';
 import { getArmyRegistry, getRankManager, getRewardPool, getTaskRegistry } from './contracts.svelte';
 import { callsignFor, loadCallsignTable, type CallsignTable } from './callsigns';
 import { isDemo } from '$lib/demo/flag';
 import { demoReadProvider } from '$lib/demo/mock-chain';
 
-const READ_RPC_URLS = ['https://sepolia.base.org', 'https://base-sepolia-rpc.publicnode.com'];
+const READ_RPC_URLS = RPC_URL_OVERRIDE ? [RPC_URL_OVERRIDE] : ['https://sepolia.base.org', 'https://base-sepolia-rpc.publicnode.com'];
 
 let providerPromise: Promise<JsonRpcProvider> | null = null;
 

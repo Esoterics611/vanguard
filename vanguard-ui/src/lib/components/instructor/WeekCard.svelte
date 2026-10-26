@@ -19,6 +19,7 @@
 		students,
 		canManage,
 		current = false,
+		currentLabel = 'This week',
 		onchange,
 	}: {
 		board: WeekBoard;
@@ -26,6 +27,7 @@
 		students: StudentRow[];
 		canManage: boolean;
 		current?: boolean;
+		currentLabel?: string;
 		/** Reloads the cohort; resolves to the refreshed board for this week. */
 		onchange: () => Promise<WeekBoard | undefined>;
 	} = $props();
@@ -78,6 +80,7 @@
 
 	async function post() {
 		if (!cohort.squadId || rewardWei === null) return;
+		expanded = true; // keep the card open for the progress notices, whatever `current` does
 		let objectiveId = board.objective?.id;
 		if (objectiveId === undefined) {
 			const brief = fingerprintText(weekBrief(cohort, board.week));
@@ -94,6 +97,7 @@
 	}
 
 	async function handOut() {
+		expanded = true;
 		const pairs = without.slice(0, board.open.length).map((s, i) => [board.open[i].id, s.member.address] as const);
 		const calls = pairs.map(([taskId, student]) => ({
 			to: addresses.TaskRegistry,
@@ -130,7 +134,7 @@
 		<span class="min-w-0 flex-1">
 			<span class="flex flex-wrap items-center gap-2">
 				<span class="text-sm font-medium text-vanguard-text">{board.week.title}</span>
-				{#if current}<span class="rounded-full bg-cyan-400/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-cyan-300">This week</span>{/if}
+				{#if current}<span class="rounded-full bg-cyan-400/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-cyan-300">{currentLabel}</span>{/if}
 			</span>
 			<span class="mt-0.5 block truncate text-xs text-vanguard-text-muted">{summary}</span>
 		</span>

@@ -11,6 +11,7 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { DEMO_SQUAD_ID, isDemo } from '$lib/demo/flag';
+import { deployment } from '$lib/contracts/addresses';
 
 const REPO = 'https://github.com/Esoterics611/vanguard/blob/main';
 
@@ -36,7 +37,7 @@ export interface Cohort {
 	pitch: string;
 	/** First day of week 1 (YYYY-MM-DD), or null until the dates are set. */
 	startDate: string | null;
-	/** ArmyRegistry unit id of the cohort squad; null until it exists on chain. */
+	/** ArmyRegistry unit id of the cohort squad. Leave null: the setup script records it in contracts/deployed/. */
 	squadId: number | null;
 	instructor: { name: string; address: string | null };
 	seats: number | null;
@@ -143,8 +144,19 @@ export const COHORTS: Cohort[] = [
 ];
 
 export function getCohort(id: string | null | undefined): Cohort {
-	const cohort = COHORTS.find((c) => c.id === id) ?? COHORTS[0];
+	const cohort = withSetup(COHORTS.find((c) => c.id === id) ?? COHORTS[0]);
 	return isDemo() ? demoSchedule(cohort) : cohort;
+}
+
+/** The squad (and instructor) the setup script recorded in the deployment record, if any. */
+function withSetup(cohort: Cohort): Cohort {
+	const record = deployment.academy?.[cohort.id];
+	if (!record || cohort.squadId !== null) return cohort;
+	return {
+		...cohort,
+		squadId: record.squadId,
+		instructor: { ...cohort.instructor, address: record.instructor ?? cohort.instructor.address },
+	};
 }
 
 /** In demo mode the cohort is open on the simulated chain and in its third week. */
