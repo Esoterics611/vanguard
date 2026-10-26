@@ -3,12 +3,12 @@
 	import { SvelteSet } from 'svelte/reactivity';
 	import { page } from '$app/stores';
 	import { resolve } from '$app/paths';
-	import { ArrowRight, Check, CheckCheck, Circle, Clock, Undo2, type Icon as IconType } from 'lucide-svelte';
+	import { ArrowRight, Check, CheckCheck, Circle, CircleAlert, Clock, Undo2, type Icon as IconType } from 'lucide-svelte';
 	import { wallet } from '$lib/contracts/provider.svelte';
 	import { addresses } from '$lib/contracts/addresses';
 	import { encoders } from '$lib/contracts/contracts.svelte';
 	import { BatchRunner } from '$lib/contracts/batch.svelte';
-	import type { TaskState } from '$lib/contracts/chain';
+	import { isLate, type TaskState } from '$lib/contracts/chain';
 	import { cohortPhase, currentWeek, daysUntilStart, formatCohortDates, getCohort, inviteLink } from '$lib/academy/cohorts';
 	import { instructor } from '$lib/academy/instructor.svelte';
 	import { promotesUpTo, rankLabel } from '$lib/academy/promotion';
@@ -86,14 +86,17 @@
 	let postedCount = $derived(instructor.weeks.filter((w) => w.objective).length);
 	let myInviteLink = $derived(wallet.account ? inviteLink($page.url.origin + resolve('/join'), cohort, wallet.account) : '');
 
-	const CELL: Record<TaskState, { label: string; cls: string; icon: typeof IconType }> = {
+	// 'late': handed out, but the deadline passed before the student handed it in.
+	type Cell = TaskState | 'late';
+	const CELL: Record<Cell, { label: string; cls: string; icon: typeof IconType }> = {
 		approved: { label: 'Approved', cls: 'bg-emerald-400/15 text-emerald-300', icon: Check },
 		submitted: { label: 'In review', cls: 'bg-purple-400/15 text-purple-300', icon: Clock },
 		assigned: { label: 'To hand in', cls: 'bg-cyan-400/10 text-cyan-300', icon: Circle },
 		rejected: { label: 'Sent back', cls: 'bg-red-400/15 text-red-300', icon: Undo2 },
 		open: { label: 'Open', cls: 'text-vanguard-text-muted', icon: Circle },
+		late: { label: 'Missed the deadline', cls: 'bg-amber-400/15 text-amber-300', icon: CircleAlert },
 	};
-	const LEGEND: TaskState[] = ['approved', 'submitted', 'assigned', 'rejected'];
+	const LEGEND: Cell[] = ['approved', 'submitted', 'assigned', 'rejected', 'late'];
 </script>
 
 <svelte:head>
@@ -269,7 +272,7 @@
 										{@const task = row.byWeek.get(board.week.week)}
 										<td class="px-1 py-3 text-center">
 											{#if task}
-												{@const cell = CELL[task.state]}
+												{@const cell = CELL[isLate(task) ? 'late' : task.state]}
 												<span class="inline-flex h-6 w-6 items-center justify-center rounded-md {cell.cls}" title="Week {board.week.week}: {cell.label}"><cell.icon size={13} strokeWidth={2.5} /></span>
 											{:else if board.objective}
 												<span class="text-xs text-vanguard-text-muted/60" title="Week {board.week.week}: no copy yet">–</span>

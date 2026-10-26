@@ -7,7 +7,7 @@
 	import { TxRunner, requireSigner } from '$lib/contracts/tx.svelte';
 	import { BatchRunner, type Call } from '$lib/contracts/batch.svelte';
 	import { fingerprintText } from '$lib/contracts/fingerprint';
-	import { formatToken } from '$lib/contracts/chain';
+	import { formatToken, isLate } from '$lib/contracts/chain';
 	import { weekBrief, type Cohort } from '$lib/academy/cohorts';
 	import type { StudentRow, WeekBoard } from '$lib/academy/instructor.svelte';
 	import TxNotice from '$components/academy/TxNotice.svelte';
@@ -36,10 +36,12 @@
 	const tx = new TxRunner();
 	const batch = new BatchRunner();
 
-	// End of the week by default (week 1 runs from the start date for 7 days).
+	// End of the week by default (week 1 runs from the start date for 7 days); a week from
+	// today once that has passed, for copies posted for late students.
 	function defaultDeadline(): string {
 		if (!cohort.startDate) return '';
-		const end = new Date(new Date(`${cohort.startDate}T00:00:00`).getTime() + (board.week.week * 7 - 1) * DAY);
+		const weekEnd = new Date(`${cohort.startDate}T00:00:00`).getTime() + (board.week.week * 7 - 1) * DAY;
+		const end = new Date(weekEnd + DAY > Date.now() ? weekEnd : Date.now() + 7 * DAY);
 		return `${end.getFullYear()}-${String(end.getMonth() + 1).padStart(2, '0')}-${String(end.getDate()).padStart(2, '0')}`;
 	}
 
@@ -51,8 +53,14 @@
 	let deadline = $state(defaultDeadline());
 
 	let posted = $derived(board.objective !== null);
-	// Students with no copy of this week's assignment yet.
-	let without = $derived(students.filter((s) => !s.byWeek.has(board.week.week)));
+	// Students who need a copy of this week's assignment: none yet, or theirs went past its deadline.
+	let without = $derived(
+		students.filter((s) => {
+			const task = s.byWeek.get(board.week.week);
+			return !task || isLate(task);
+		})
+	);
+	let late = $derived(without.filter((s) => s.byWeek.has(board.week.week)).length);
 	let neededCopies = $derived(Math.max(0, without.length - board.open.length));
 	let copies = $state(0);
 	$effect(() => {
@@ -67,6 +75,7 @@
 		}
 	});
 	let deadlineSeconds = $derived(deadline ? Math.floor(new Date(`${deadline}T23:59:59`).getTime() / 1000) : 0);
+	let deadlinePassed = $derived(deadlineSeconds > 0 && deadlineSeconds * 1000 < Date.now());
 
 	function copyCalls(objectiveId: number, count: number): Call[] {
 		const data = encoders.TaskRegistry.encodeFunctionData('createTask', [
@@ -79,7 +88,7 @@
 	}
 
 	async function post() {
-		if (!cohort.squadId || rewardWei === null) return;
+		if (!cohort.squadId || rewardWei === null || deadlinePassed) return;
 		expanded = true; // keep the card open for the progress notices, whatever `current` does
 		let objectiveId = board.objective?.id;
 		if (objectiveId === undefined) {
@@ -107,12 +116,14 @@
 		await onchange();
 	}
 
+	let pastDeadline = $derived(board.tasks.filter((t) => isLate(t)).length);
 	let summary = $derived(
 		posted
 			? [
 					`${board.tasks.length} ${board.tasks.length === 1 ? 'copy' : 'copies'}`,
 					board.counts.open && `${board.counts.open} open`,
-					board.counts.assigned && `${board.counts.assigned} to hand in`,
+					board.counts.assigned - pastDeadline && `${board.counts.assigned - pastDeadline} to hand in`,
+					pastDeadline && `${pastDeadline} past deadline`,
 					board.counts.submitted && `${board.counts.submitted} in review`,
 					board.counts.approved && `${board.counts.approved} approved`,
 					board.counts.rejected && `${board.counts.rejected} sent back`,
@@ -157,7 +168,7 @@
 						</label>
 						<label class="space-y-1">
 							<span class="block text-xs text-vanguard-text-muted">Deadline (optional)</span>
-							<input type="date" bind:value={deadline} class="field" />
+							<input type="date" bind:value={deadline} class="field" class:invalid={deadlinePassed} />
 						</label>
 						<label class="space-y-1">
 							<span class="block text-xs text-vanguard-text-muted">{posted ? 'Extra copies' : 'Copies'}</span>
@@ -167,21 +178,24 @@
 					<p class="text-xs text-vanguard-text-muted">
 						{#if rewardWei !== null && rewardWei > 0n}Each approved copy pays {formatToken(rewardWei)} VGRD times the student’s rank multiplier.{/if}
 						Students take an open copy from their cohort page, or you hand them out below.
+						{#if deadlinePassed}<span class="text-red-300">That deadline has passed: pick a later date, or clear it for no deadline.</span>{/if}
 					</p>
-					<button class="btn-primary" onclick={post} disabled={tx.busy || batch.busy || rewardWei === null || (posted && copies === 0)}>
+					<button class="btn-primary" onclick={post} disabled={tx.busy || batch.busy || rewardWei === null || deadlinePassed || (posted && copies === 0)}>
 						<Send size={14} />
 						{posted ? `Post ${copies} more` : `Post week ${board.week.week}`}
 					</button>
 				{/if}
 
-				{#if posted && board.open.length > 0 && without.length > 0}
+				{#if posted && without.length > 0}
 					<div class="flex flex-wrap items-center gap-3 rounded-xl border border-vanguard-border bg-vanguard-bg/40 p-3.5">
 						<p class="min-w-0 flex-1 text-sm text-vanguard-text-muted">
-							{without.length} {without.length === 1 ? 'student hasn’t' : 'students haven’t'} got this week’s assignment; {board.open.length} open {board.open.length === 1 ? 'copy' : 'copies'} waiting.
+							{without.length} {without.length === 1 ? 'student needs' : 'students need'} this week’s assignment{late > 0 ? ` (${late} missed the deadline)` : ''}{#if board.open.length > 0}; {board.open.length} open {board.open.length === 1 ? 'copy' : 'copies'} waiting.{:else}. Post {without.length === 1 ? 'a copy' : 'copies'} for them above, then hand {without.length === 1 ? 'it' : 'them'} out here.{/if}
 						</p>
-						<button class="btn-ghost" onclick={handOut} disabled={batch.busy}>
-							<UserPlus size={14} /> Hand out {Math.min(without.length, board.open.length)}
-						</button>
+						{#if board.open.length > 0}
+							<button class="btn-ghost" onclick={handOut} disabled={batch.busy}>
+								<UserPlus size={14} /> Hand out {Math.min(without.length, board.open.length)}
+							</button>
+						{/if}
 					</div>
 				{/if}
 

@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { Send } from 'lucide-svelte';
 	import { getTaskRegistry } from '$lib/contracts/contracts.svelte';
 	import { TxRunner, requireSigner } from '$lib/contracts/tx.svelte';
-	import type { ChainTask } from '$lib/contracts/chain';
+	import { isLate, type ChainTask } from '$lib/contracts/chain';
 	import FingerprintInput from './FingerprintInput.svelte';
 	import TxNotice from './TxNotice.svelte';
 
@@ -12,7 +13,7 @@
 	let fingerprint = $state<string | null>(null);
 
 	let resubmit = $derived(task.state === 'rejected');
-	let pastDeadline = $derived(task.deadline > 0 && Date.now() / 1000 > task.deadline);
+	let pastDeadline = $derived(isLate(task));
 
 	async function submit() {
 		if (!fingerprint) return;
@@ -26,8 +27,8 @@
 </script>
 
 <div class="space-y-3">
-	{#if pastDeadline && !resubmit}
-		<p class="text-sm text-amber-300">The deadline for this assignment has passed, so it can’t be submitted. Ask your instructor to reopen it.</p>
+	{#if pastDeadline}
+		<p class="text-sm text-amber-300">The deadline has passed, so this copy can’t be handed in any more. Ask your instructor for a new one.</p>
 	{:else}
 		<FingerprintInput bind:fingerprint />
 
@@ -40,6 +41,7 @@
 
 		<p class="text-xs leading-relaxed text-vanguard-text-muted">
 			Only this fingerprint goes on chain. Your file stays on your device: send it to your instructor, who checks that it matches before approving.
+			Keep it unchanged; any edit changes the fingerprint. <a href={resolve('/academy/guide')} class="text-cyan-300 hover:underline">How handing in works</a>
 		</p>
 
 		<button

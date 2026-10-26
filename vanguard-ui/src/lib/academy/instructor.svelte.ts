@@ -6,6 +6,7 @@
 // ═══════════════════════════════════════════════════════════════
 
 import {
+	isLate,
 	loadMember,
 	loadMultipliers,
 	loadObjectives,
@@ -37,7 +38,7 @@ export interface WeekBoard {
 
 export interface StudentRow {
 	member: ChainMember;
-	/** The student's task for each week, by week number (the latest, if several). */
+	/** The student's task for each week, by week number: the latest that is still live, if several. */
 	byWeek: Map<number, ChainTask>;
 	promotion: PromotionRecord;
 }
@@ -117,7 +118,9 @@ class InstructorStore {
 				const byWeek = new Map<number, ChainTask>();
 				for (const board of weeks) {
 					const theirs = board.tasks.filter((t) => sameAddress(t.assignee, member.address));
-					if (theirs.length) byWeek.set(board.week.week, theirs[theirs.length - 1]);
+					// A copy that went past its deadline only counts when it's all they have.
+					const pick = theirs.filter((t) => !isLate(t)).at(-1) ?? theirs.at(-1);
+					if (pick) byWeek.set(board.week.week, pick);
 				}
 				return { member, byWeek, promotion: promotions.get(member.address.toLowerCase()) ?? NO_PROMOTION };
 			});

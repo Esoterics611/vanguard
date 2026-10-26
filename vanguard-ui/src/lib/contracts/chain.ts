@@ -111,6 +111,11 @@ export function sameAddress(a: string | null | undefined, b: string | null | und
 	return !!a && !!b && a.toLowerCase() === b.toLowerCase();
 }
 
+/** An assigned task past its deadline. The contract no longer accepts work for it and can't extend it, so the student needs a fresh copy. */
+export function isLate(task: ChainTask, now = Date.now()): boolean {
+	return task.state === 'assigned' && task.deadline > 0 && now / 1000 > task.deadline;
+}
+
 const orNull = (address: string) => (address === ZeroAddress ? null : address);
 
 // Units named with a hash rather than a short string.

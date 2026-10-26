@@ -5,6 +5,7 @@
 // ═══════════════════════════════════════════════════════════════
 
 import {
+	isLate,
 	loadEthBalance,
 	loadMember,
 	loadMultipliers,
@@ -26,6 +27,7 @@ import { weekBrief, type Cohort, type CohortWeek } from './cohorts';
 export type WeekStatus =
 	| 'changes' // sent back by the instructor
 	| 'todo' // assigned, not yet submitted
+	| 'late' // the deadline passed before it was handed in, and no fresh copy is open
 	| 'available' // open assignment the student can take
 	| 'review' // submitted, waiting for the instructor
 	| 'done' // approved
@@ -45,10 +47,11 @@ export interface WeekProgress {
 function weekStatus(objective: ChainObjective | null, mine: ChainTask[], open: ChainTask[]): WeekStatus {
 	if (!objective) return 'not-posted';
 	if (mine.some((t) => t.state === 'rejected')) return 'changes';
-	if (mine.some((t) => t.state === 'assigned')) return 'todo';
+	if (mine.some((t) => t.state === 'assigned' && !isLate(t))) return 'todo';
 	if (mine.some((t) => t.state === 'submitted')) return 'review';
-	if (mine.length > 0) return 'done';
-	return open.length > 0 ? 'available' : 'posted';
+	if (mine.some((t) => t.state === 'approved')) return 'done';
+	if (open.length > 0) return 'available';
+	return mine.length > 0 ? 'late' : 'posted';
 }
 
 class StudentStore {

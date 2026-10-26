@@ -8,6 +8,7 @@
 
 	const routeTitles: Partial<Record<RouteId, string>> = {
 		'/academy': 'Academy',
+		'/academy/guide': 'Handing in work',
 		'/instructor': 'Instructor',
 		'/dashboard': 'Dashboard',
 		'/bounties': 'Bounties',
@@ -24,6 +25,7 @@
 
 	// Breadcrumb from the route id: /team/[id] → Team
 	const SECTIONS: Record<string, string> = {
+		academy: resolve('/academy'),
 		bounties: resolve('/bounties'),
 		objectives: resolve('/objectives'),
 		team: resolve('/team'),
