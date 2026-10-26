@@ -11,6 +11,7 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { DEMO_SQUAD_ID, isDemo } from '$lib/demo/flag';
+import { deployment } from '$lib/contracts/addresses';
 
 const REPO = 'https://github.com/Esoterics611/vanguard/blob/main';
 
@@ -36,12 +37,14 @@ export interface Cohort {
 	pitch: string;
 	/** First day of week 1 (YYYY-MM-DD), or null until the dates are set. */
 	startDate: string | null;
-	/** ArmyRegistry unit id of the cohort squad; null until it exists on chain. */
+	/** ArmyRegistry unit id of the cohort squad. Leave null: the setup script records it in contracts/deployed/. */
 	squadId: number | null;
 	instructor: { name: string; address: string | null };
 	seats: number | null;
 	/** Application form, if seats are allocated by application. */
 	intakeUrl: string | null;
+	/** Base pay per approved assignment, in VGRD; the student's rank multiplier applies on top. */
+	assignmentReward: string;
 	outcomes: string[];
 	weeks: CohortWeek[];
 }
@@ -53,12 +56,14 @@ export const COHORTS: Cohort[] = [
 		track: 'DeFi investment banking',
 		pitch:
 			'Eight weeks from first principles to a live due-diligence engagement. You learn the work, do it on chain, and finish with a rank and a record anyone can check.',
-		startDate: null,
+		startDate: '2026-11-11',
 		squadId: null,
 		instructor: { name: 'To be announced', address: null },
 		seats: 25,
 		intakeUrl: null,
+		assignmentReward: '100',
 		outcomes: [
+			'Paid coursework: every approved assignment pays VGRD at your rank',
 			'A callsign and a work record on chain that anyone can verify',
 			'Rank in the guild, earned through approved work',
 			'A capstone diligence deliverable with your name on its fingerprint',
@@ -139,8 +144,19 @@ export const COHORTS: Cohort[] = [
 ];
 
 export function getCohort(id: string | null | undefined): Cohort {
-	const cohort = COHORTS.find((c) => c.id === id) ?? COHORTS[0];
+	const cohort = withSetup(COHORTS.find((c) => c.id === id) ?? COHORTS[0]);
 	return isDemo() ? demoSchedule(cohort) : cohort;
+}
+
+/** The squad (and instructor) the setup script recorded in the deployment record, if any. */
+function withSetup(cohort: Cohort): Cohort {
+	const record = deployment.academy?.[cohort.id];
+	if (!record || cohort.squadId !== null) return cohort;
+	return {
+		...cohort,
+		squadId: record.squadId,
+		instructor: { ...cohort.instructor, address: record.instructor ?? cohort.instructor.address },
+	};
 }
 
 /** In demo mode the cohort is open on the simulated chain and in its third week. */

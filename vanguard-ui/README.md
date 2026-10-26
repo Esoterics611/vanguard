@@ -18,13 +18,19 @@ Open [http://localhost:5173](http://localhost:5173)
 |------|-----|-------------|
 | Join | `/join?cohort=cohort-1&invite=0x…` | Guided setup: wallet, network, test ETH, enlist in the cohort squad. `/` forwards here. |
 | Academy | `/academy` | Cohort home: next assignment, syllabus progress, rank, classmates, pay |
+| Handing in work | `/academy/guide` | Student guide: submit, send the file, review, deadlines, pay |
+| Instructor | `/instructor` | Review queue (checks each file against its fingerprint), weekly posting and handing out, students and promotions |
 | Team | `/team` | Roster read from ArmyRegistry |
 
-Cohorts are defined in `src/lib/academy/cohorts.ts`. The pages below still run on sample data.
+Cohorts are defined in `src/lib/academy/cohorts.ts`. Contract addresses, and each cohort's squad once it exists on chain, come from the deployment record `contracts/deployed/base-sepolia.json`; `contracts/scripts/academy-setup.js` writes the squad there. The pages below still run on sample data.
 
 ### Demo mode
 
-`/join?demo=1` swaps in a simulated wallet and an in-memory copy of the contracts (`src/lib/demo/`), so anyone can click through the whole student path (connect, switch network, faucet, enlist, take and submit an assignment, get it approved and paid, claim) without a wallet or test ETH. Nothing touches Base Sepolia. It stays on for the browser tab until "Leave demo".
+`/join?demo=1` swaps in a simulated wallet and an in-memory copy of the contracts (`src/lib/demo/`), so anyone can click through the whole student path (connect, switch network, faucet, enlist, take and submit an assignment, get it approved and paid, claim) without a wallet or test ETH. `/instructor?demo=instructor` does the same for the instructor: review, send back, post a week, hand it out, promote. Nothing touches Base Sepolia. It stays on for the browser tab until "Leave demo".
+
+### Rehearsing on a local chain
+
+A build can point at any deployment: `VITE_DEPLOYMENT` takes a deployment record as JSON (the same shape as `contracts/deployed/base-sepolia.json`) and `VITE_RPC_URL` the RPC for reads. Deploy the contracts to a local node with chain id 84532, run `academy-setup.js --deployment <that record>`, then build with both variables set.
 
 ## Build and deploy
 

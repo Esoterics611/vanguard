@@ -16,13 +16,13 @@ import {
 	toUtf8Bytes,
 } from 'ethers';
 import { RANKS, type Rank } from '$lib/types';
-import { BASE_SEPOLIA_CHAIN_ID } from './addresses';
+import { BASE_SEPOLIA_CHAIN_ID, RPC_URL_OVERRIDE } from './addresses';
 import { getArmyRegistry, getRankManager, getRewardPool, getTaskRegistry } from './contracts.svelte';
 import { callsignFor, loadCallsignTable, type CallsignTable } from './callsigns';
 import { isDemo } from '$lib/demo/flag';
 import { demoReadProvider } from '$lib/demo/mock-chain';
 
-const READ_RPC_URLS = ['https://sepolia.base.org', 'https://base-sepolia-rpc.publicnode.com'];
+const READ_RPC_URLS = RPC_URL_OVERRIDE ? [RPC_URL_OVERRIDE] : ['https://sepolia.base.org', 'https://base-sepolia-rpc.publicnode.com'];
 
 let providerPromise: Promise<JsonRpcProvider> | null = null;
 
@@ -109,6 +109,11 @@ export function rankCode(rankIndex: number): Rank {
 
 export function sameAddress(a: string | null | undefined, b: string | null | undefined): boolean {
 	return !!a && !!b && a.toLowerCase() === b.toLowerCase();
+}
+
+/** An assigned task past its deadline. The contract no longer accepts work for it and can't extend it, so the student needs a fresh copy. */
+export function isLate(task: ChainTask, now = Date.now()): boolean {
+	return task.state === 'assigned' && task.deadline > 0 && now / 1000 > task.deadline;
 }
 
 const orNull = (address: string) => (address === ZeroAddress ? null : address);
@@ -280,4 +285,55 @@ export function formatToken(wei: bigint, digits = 2): string {
 
 export function formatMultiplier(bps: number): string {
 	return `${(bps / 100).toFixed(bps % 10 === 0 ? 1 : 2)}×`;
+}
+
+// ── Roles and promotions ───────────────────────────────────────
+
+/** keccak256("DAO_ROLE"): command's role on TaskRegistry and RankManager. */
+export const DAO_ROLE = keccak256(toUtf8Bytes('DAO_ROLE'));
+
+export interface Roles {
+	/** Can create, assign and review work in any unit. */
+	taskAdmin: boolean;
+	/** Can promote anyone to any rank and record training (daoPromote, completePLDC). */
+	rankAdmin: boolean;
+}
+
+export async function loadRoles(address: string): Promise<Roles> {
+	const p = await readProvider();
+	const [taskAdmin, rankAdmin] = await Promise.all([
+		getTaskRegistry(p).hasRole(DAO_ROLE, address) as Promise<boolean>,
+		getRankManager(p).hasRole(DAO_ROLE, address) as Promise<boolean>,
+	]);
+	return { taskAdmin, rankAdmin };
+}
+
+export interface PromotionRecord {
+	/** When the member was last promoted, or null if never. */
+	lastPromotion: Date | null;
+	/** The leadership course (PLDC) is recorded: required for sergeant. */
+	pldc: boolean;
+	/** RankManager.canPromote(promoter, member, rank + 1); false at captain or without a promoter. */
+	canPromote: boolean;
+}
+
+export async function loadPromotionRecords(members: ChainMember[], promoter: string | null): Promise<Map<string, PromotionRecord>> {
+	const rankManager = getRankManager(await readProvider());
+	const records = await Promise.all(
+		members.map(async (m) => {
+			const next = m.rankIndex + 1;
+			const [last, pldc, can] = await Promise.all([
+				rankManager.lastPromotionTime(m.address) as Promise<bigint>,
+				rankManager.hasCompletedPLDC(m.address) as Promise<boolean>,
+				promoter && next <= 11 ? (rankManager.canPromote(promoter, m.address, next) as Promise<boolean>) : false,
+			]);
+			return [m.address.toLowerCase(), { lastPromotion: last > 0n ? new Date(Number(last) * 1000) : null, pldc, canPromote: can }] as const;
+		})
+	);
+	return new Map(records);
+}
+
+/** Minimum time between two promotions of the same member, in seconds. */
+export async function loadPromotionCooldown(): Promise<number> {
+	return Number(await getRankManager(await readProvider()).promotionCooldown());
 }

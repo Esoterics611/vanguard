@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/stores';
-	import { ArrowRight, BookOpen, Check, ChevronDown, Coins, ExternalLink, Hand } from 'lucide-svelte';
+	import { ArrowRight, BookOpen, Check, ChevronDown, CircleAlert, Coins, ExternalLink, Hand } from 'lucide-svelte';
 	import { wallet } from '$lib/contracts/provider.svelte';
 	import { getRewardPool, getTaskRegistry } from '$lib/contracts/contracts.svelte';
 	import { TxRunner, requireSigner } from '$lib/contracts/tx.svelte';
-	import { formatMultiplier, formatToken, payFor, sameAddress, type ChainTask } from '$lib/contracts/chain';
+	import { formatMultiplier, formatToken, isLate, payFor, sameAddress, type ChainTask } from '$lib/contracts/chain';
 	import { cohortPhase, currentWeek, daysUntilStart, formatCohortDates, getCohort, inviteLink } from '$lib/academy/cohorts';
 	import { assignmentText, student, type WeekProgress, type WeekStatus } from '$lib/academy/student.svelte';
 	import { isDemo } from '$lib/demo/flag';
@@ -39,6 +39,7 @@
 	const STATUS: Record<WeekStatus, { label: string; tone: string }> = {
 		changes: { label: 'Changes requested', tone: 'text-red-300 bg-red-400/10 border-red-400/25' },
 		todo: { label: 'To hand in', tone: 'text-cyan-300 bg-cyan-400/10 border-cyan-400/25' },
+		late: { label: 'Missed the deadline', tone: 'text-amber-300 bg-amber-400/10 border-amber-400/25' },
 		available: { label: 'Ready to take', tone: 'text-cyan-300 bg-cyan-400/10 border-cyan-400/25' },
 		review: { label: 'In review', tone: 'text-purple-300 bg-purple-400/10 border-purple-400/25' },
 		done: { label: 'Approved', tone: 'text-emerald-300 bg-emerald-400/10 border-emerald-400/25' },
@@ -55,6 +56,7 @@
 	const SEGMENT: Record<WeekStatus, string> = {
 		changes: 'bg-red-400',
 		todo: 'bg-cyan-400',
+		late: 'bg-amber-400',
 		available: 'bg-cyan-400/60',
 		review: 'bg-purple-400',
 		done: 'bg-emerald-400',
@@ -77,12 +79,13 @@
 			const task =
 				status === 'available'
 					? p.open[0]
-					: p.mine.find((t) => t.state === (status === 'changes' ? 'rejected' : 'assigned'));
+					: p.mine.find((t) => (status === 'changes' ? t.state === 'rejected' : t.state === 'assigned' && !isLate(t)));
 			if (task) return { progress: p, task };
 		}
 		return null;
 	});
 	let waitingReview = $derived(progress.filter((p) => p.status === 'review'));
+	let lateWeeks = $derived(progress.filter((p) => p.status === 'late'));
 
 	let expanded = $state<number | null>(null);
 	let openWeek = $derived(expanded ?? nextUp?.progress.week.week ?? week ?? 1);
@@ -180,7 +183,10 @@
 			<!-- Next up -->
 			{#if student.inCohort}
 				<section class="rounded-2xl border border-vanguard-border bg-vanguard-surface p-6">
-					<h3 class="text-xs font-semibold uppercase tracking-wider text-vanguard-text-muted">Next up</h3>
+					<div class="flex items-baseline justify-between gap-3">
+						<h3 class="text-xs font-semibold uppercase tracking-wider text-vanguard-text-muted">Next up</h3>
+						<a href={resolve('/academy/guide')} class="text-xs text-cyan-300 hover:underline">How handing in works</a>
+					</div>
 					{#if nextUp}
 						{@const { progress: p, task } = nextUp}
 						{@const brief = assignmentText(p.week, task)}
@@ -206,6 +212,18 @@
 								<SubmitWork {task} onsubmitted={reload} />
 							{/if}
 						</div>
+					{:else if lateWeeks.length > 0}
+						<div class="mt-3 flex items-start gap-3">
+							<span class="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-amber-400/10 text-amber-300"><CircleAlert size={16} /></span>
+							<div>
+								<p class="text-base font-medium text-vanguard-text">
+									The deadline passed on week {lateWeeks.map((w) => w.week.week).join(', ')}.
+								</p>
+								<p class="mt-0.5 text-sm text-vanguard-text-muted">
+									That copy can’t be handed in any more. Ask your instructor for a new one; it will show up here.
+								</p>
+							</div>
+						</div>
 					{:else}
 						<div class="mt-3 flex items-start gap-3">
 							<span class="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-emerald-400/10 text-emerald-300"><Check size={16} /></span>
@@ -228,7 +246,12 @@
 			<section class="rounded-2xl border border-vanguard-border bg-vanguard-surface">
 				<div class="flex items-baseline justify-between border-b border-vanguard-border px-6 py-4">
 					<h3 class="text-base font-semibold text-vanguard-text">Syllabus</h3>
-					{#if student.loading}<span class="text-xs text-vanguard-text-muted">Reading the chain…</span>{/if}
+					{#if student.loading}
+						<span class="text-xs text-vanguard-text-muted">Reading the chain…</span>
+					{:else if !student.inCohort}
+						<!-- Members find this link under Next up -->
+						<a href={resolve('/academy/guide')} class="text-xs text-cyan-300 hover:underline">How handing in works</a>
+					{/if}
 				</div>
 				<ol class="divide-y divide-vanguard-border">
 					{#each progress as p}
@@ -293,7 +316,7 @@
 											{#each p.mine as task}
 												<li class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-vanguard-text-muted">
 													<span class="font-mono">#{task.id}</span>
-													<span>{TASK_LABEL[task.state]}</span>
+													<span>{isLate(task) ? 'Missed the deadline' : TASK_LABEL[task.state]}</span>
 													{#if task.submission}<span class="font-mono" title={task.submission}>fingerprint {task.submission.slice(0, 10)}…</span>{/if}
 													{#if payText(task)}<span class="text-amber-300">{payText(task)}</span>{/if}
 												</li>

@@ -4,6 +4,8 @@
 	import type { RouteId } from '$app/types';
 	import { app } from '$stores/app.svelte';
 	import { student } from '$lib/academy/student.svelte';
+	import { demoRole, isDemo } from '$lib/demo/flag';
+	import { instructor } from '$lib/academy/instructor.svelte';
 	import { RANK_META } from '$lib/types';
 	import { formatToken } from '$lib/contracts/chain';
 	import RankInsignia from '$components/RankInsignia.svelte';
@@ -23,12 +25,15 @@
 	}
 
 	const JOIN_ITEM: NavItem = { label: 'Join', route: '/join', href: resolve('/join'), icon: '+' };
+	const INSTRUCTOR_ITEM: NavItem = { label: 'Instructor', route: '/instructor', href: resolve('/instructor'), icon: '★' };
+	const demoInstructor = isDemo() && demoRole() === 'instructor';
 
 	let sections = $derived<NavSection[]>([
 		{
 			title: 'Academy',
 			items: [
 				{ label: 'My cohort', route: '/academy', href: resolve('/academy'), icon: '◆' },
+				...(student.isInstructor || demoInstructor ? [INSTRUCTOR_ITEM] : []),
 				...(student.member ? [] : [JOIN_ITEM]),
 			],
 		},
@@ -62,6 +67,7 @@
 
 	function navBadge(href: string): number | undefined {
 		if (href === '/academy' && cohortActions > 0) return cohortActions;
+		if (href === '/instructor' && instructor.submissions.length > 0) return instructor.submissions.length;
 		if (href === '/review' && pendingReviews > 0) return pendingReviews;
 		if (href === '/tasks') {
 			const myActive = app.myTasks.filter(t => t.status !== 'approved').length;
