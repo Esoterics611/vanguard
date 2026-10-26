@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { page } from '$app/stores';
 	import { ArrowRight, BookOpen, Check, ChevronDown, Coins, ExternalLink, Hand } from 'lucide-svelte';
 	import { wallet } from '$lib/contracts/provider.svelte';
@@ -7,6 +8,8 @@
 	import { formatMultiplier, formatToken, payFor, sameAddress, type ChainTask } from '$lib/contracts/chain';
 	import { cohortPhase, currentWeek, daysUntilStart, formatCohortDates, getCohort, inviteLink } from '$lib/academy/cohorts';
 	import { assignmentText, student, type WeekProgress, type WeekStatus } from '$lib/academy/student.svelte';
+	import { isDemo } from '$lib/demo/flag';
+	import { onDemoChange } from '$lib/demo/mock-chain';
 	import { RANK_META, RANKS } from '$lib/types';
 	import RankInsignia from '$components/RankInsignia.svelte';
 	import SoldierAvatar from '$components/SoldierAvatar.svelte';
@@ -24,6 +27,10 @@
 	function reload() {
 		return student.refresh(cohort, wallet.account);
 	}
+
+	// In demo mode the simulated instructor reviews work on a timer; show it when it lands.
+	const demo = isDemo();
+	$effect(() => (demo ? onDemoChange(() => void reload()) : undefined));
 
 	let phase = $derived(cohortPhase(cohort));
 	let week = $derived(currentWeek(cohort));
@@ -104,7 +111,7 @@
 	}
 
 	const LADDER = RANKS.slice(0, 5); // PVT … SGT: the path a cohort walks
-	let myInviteLink = $derived(wallet.account ? inviteLink($page.url.origin, cohort, wallet.account) : '');
+	let myInviteLink = $derived(wallet.account ? inviteLink($page.url.origin + resolve('/join'), cohort, wallet.account) : '');
 </script>
 
 <svelte:head>
@@ -149,7 +156,12 @@
 					Five quick steps: a wallet, the test network, a little free test ETH for fees, and you’re in. Nothing costs real money.
 				</p>
 			</div>
-			<a href="/join?cohort={cohort.id}" class="btn-primary">Get set up <ArrowRight size={15} /></a>
+			<div class="flex flex-wrap gap-2">
+				<a href={resolve('/join') + `?cohort=${cohort.id}`} class="btn-primary">Get set up <ArrowRight size={15} /></a>
+				{#if !demo}
+					<a href={resolve('/join') + `?cohort=${cohort.id}&demo=1`} data-sveltekit-reload class="btn-ghost">Try the demo</a>
+				{/if}
+			</div>
 		</section>
 	{:else if student.loaded && student.member && cohort.squadId !== null && !student.inCohort}
 		<section class="rounded-2xl border border-amber-400/25 bg-amber-400/5 p-6 text-sm text-vanguard-text-muted">
@@ -322,10 +334,12 @@
 							<dd class="mt-0.5 font-mono text-sm text-vanguard-text">{formatToken(member.totalEarned, 0)}</dd>
 						</div>
 					</dl>
-					{#if student.pendingPay > 0n}
+					{#if student.pendingPay > 0n || claimTx.phase === 'done'}
 						<div class="mt-4 space-y-2 rounded-xl border border-amber-400/25 bg-amber-400/5 p-3.5">
-							<p class="flex items-center gap-2 text-sm text-amber-200"><Coins size={15} /> {formatToken(student.pendingPay)} VGRD ready to claim</p>
-							<button class="btn-primary w-full" onclick={claim} disabled={claimTx.busy}>Claim to your wallet</button>
+							{#if student.pendingPay > 0n}
+								<p class="flex items-center gap-2 text-sm text-amber-200"><Coins size={15} /> {formatToken(student.pendingPay)} VGRD ready to claim</p>
+								<button class="btn-primary w-full" onclick={claim} disabled={claimTx.busy}>Claim to your wallet</button>
+							{/if}
 							<TxNotice tx={claimTx} doneText="Claimed. It’s in your wallet." />
 						</div>
 					{/if}

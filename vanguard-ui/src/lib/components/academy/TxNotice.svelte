@@ -2,6 +2,7 @@
 	import { LoaderCircle, Check, CircleAlert, ExternalLink } from 'lucide-svelte';
 	import { BASE_SEPOLIA_EXPLORER_URL } from '$lib/contracts/addresses';
 	import type { TxRunner } from '$lib/contracts/tx.svelte';
+	import { isDemo } from '$lib/demo/flag';
 
 	let { tx, doneText = 'Done.' }: { tx: TxRunner; doneText?: string } = $props();
 </script>
@@ -29,13 +30,13 @@
 			{#if tx.phase === 'signing'}
 				Confirm “{tx.label}” in your wallet.
 			{:else if tx.phase === 'pending'}
-				Recording on Base Sepolia. This usually takes a few seconds.
+				Recording on {isDemo() ? 'the simulated chain' : 'Base Sepolia'}. This usually takes a few seconds.
 			{:else if tx.phase === 'done'}
 				{doneText}
 			{:else}
 				{tx.error}
 			{/if}
-			{#if tx.hash}
+			{#if tx.hash && !isDemo()}
 				<a
 					href="{BASE_SEPOLIA_EXPLORER_URL}/tx/{tx.hash}"
 					target="_blank"

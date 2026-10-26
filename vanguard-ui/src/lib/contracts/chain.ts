@@ -9,6 +9,7 @@
 import {
 	JsonRpcProvider,
 	ZeroAddress,
+	type JsonRpcApiProvider,
 	decodeBytes32String,
 	formatEther,
 	keccak256,
@@ -18,6 +19,8 @@ import { RANKS, type Rank } from '$lib/types';
 import { BASE_SEPOLIA_CHAIN_ID } from './addresses';
 import { getArmyRegistry, getRankManager, getRewardPool, getTaskRegistry } from './contracts.svelte';
 import { callsignFor, loadCallsignTable, type CallsignTable } from './callsigns';
+import { isDemo } from '$lib/demo/flag';
+import { demoReadProvider } from '$lib/demo/mock-chain';
 
 const READ_RPC_URLS = ['https://sepolia.base.org', 'https://base-sepolia-rpc.publicnode.com'];
 
@@ -36,8 +39,9 @@ async function connectRead(): Promise<JsonRpcProvider> {
 	throw new Error('Could not reach Base Sepolia. Check your connection and try again.');
 }
 
-/** Shared read-only provider for Base Sepolia. */
-export function readProvider(): Promise<JsonRpcProvider> {
+/** Shared read-only provider for Base Sepolia (the simulated chain in demo mode). */
+export function readProvider(): Promise<JsonRpcApiProvider> {
+	if (isDemo()) return Promise.resolve(demoReadProvider());
 	providerPromise ??= connectRead().catch((e) => {
 		providerPromise = null;
 		throw e;

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { app } from '$stores/app.svelte';
 	import { formatVgrd, formatDeadline } from '$lib/utils/format';
 	import StatusBadge from '$components/StatusBadge.svelte';
@@ -39,7 +40,7 @@
 			<h2 class="text-lg font-semibold text-vanguard-text">Bounties</h2>
 			<p class="text-xs text-vanguard-text-muted mt-0.5">Deal flow — each bounty is a collaboration repository</p>
 		</div>
-		<a href="/bounties/new" class="px-4 py-2 rounded-lg bg-cyan-500/10 text-cyan-400 text-sm font-medium border border-cyan-500/20 hover:bg-cyan-500/20 transition-all">
+		<a href={resolve('/bounties/new')} class="px-4 py-2 rounded-lg bg-cyan-500/10 text-cyan-400 text-sm font-medium border border-cyan-500/20 hover:bg-cyan-500/20 transition-all">
 			+ New Bounty
 		</a>
 	</div>
@@ -74,7 +75,7 @@
 			{@const progress = app.getBountyProgress(bounty.id)}
 			{@const creator = app.getSoldier(bounty.creatorId)}
 			{@const deadline = formatDeadline(bounty.deadline)}
-			<a href="/bounties/{bounty.id}" class="block rounded-xl border border-vanguard-border bg-vanguard-surface card-hover group">
+			<a href={resolve(`/bounties/${bounty.id}`)} class="block rounded-xl border border-vanguard-border bg-vanguard-surface card-hover group">
 				<div class="p-5">
 					<div class="flex items-start justify-between gap-4">
 						<div class="flex-1 min-w-0">

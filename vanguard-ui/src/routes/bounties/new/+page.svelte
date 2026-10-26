@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { goto } from '$app/navigation';
 	import { app } from '$stores/app.svelte';
 	import { RANK_META } from '$lib/types';
@@ -28,6 +29,7 @@
 			totalAmount,
 			remainingAmount: totalAmount,
 			status,
+			category: 'deal',
 			objectiveIds: [],
 			skillTags: tags,
 			deadline: new Date(deadline).toISOString(),
@@ -46,13 +48,13 @@
 			timestamp: now,
 			metadata: { amount: totalAmount },
 		}, ...app.activities];
-		goto(`/bounties/${id}`);
+		goto(resolve(`/bounties/${id}`));
 	}
 </script>
 
 <div class="max-w-2xl mx-auto space-y-6">
 	<div>
-		<a href="/bounties" class="text-xs text-vanguard-text-muted hover:text-cyan-400 transition-colors">← Back to Bounties</a>
+		<a href={resolve('/bounties')} class="text-xs text-vanguard-text-muted hover:text-cyan-400 transition-colors">← Back to Bounties</a>
 		<h2 class="text-lg font-semibold text-vanguard-text mt-2">Create New Bounty</h2>
 		<p class="text-xs text-vanguard-text-muted mt-0.5">Define a new deal or engagement for the team</p>
 	</div>
@@ -129,8 +131,8 @@
 
 		<!-- Status -->
 		<div>
-			<label class="block text-xs text-vanguard-text-muted mb-1.5 uppercase tracking-wider">Initial Status</label>
-			<div class="flex gap-2">
+			<span id="status-label" class="block text-xs text-vanguard-text-muted mb-1.5 uppercase tracking-wider">Initial Status</span>
+			<div class="flex gap-2" role="group" aria-labelledby="status-label">
 				<button
 					onclick={() => status = 'draft'}
 					class="px-3 py-1.5 rounded-lg text-xs border transition-all {status === 'draft' ? 'bg-zinc-400/10 text-zinc-300 border-zinc-400/30' : 'border-vanguard-border text-vanguard-text-muted hover:text-vanguard-text'}"
@@ -154,7 +156,7 @@
 			>
 				Create Bounty
 			</button>
-			<a href="/bounties" class="text-xs text-vanguard-text-muted hover:text-vanguard-text transition-colors">Cancel</a>
+			<a href={resolve('/bounties')} class="text-xs text-vanguard-text-muted hover:text-vanguard-text transition-colors">Cancel</a>
 		</div>
 	</div>
 </div>

@@ -16,17 +16,30 @@ Open [http://localhost:5173](http://localhost:5173)
 
 | Page | URL | Description |
 |------|-----|-------------|
-| Join | `/join?cohort=cohort-1&invite=0x…` | Guided setup: wallet, network, test ETH, enlist in the cohort squad |
+| Join | `/join?cohort=cohort-1&invite=0x…` | Guided setup: wallet, network, test ETH, enlist in the cohort squad. `/` forwards here. |
 | Academy | `/academy` | Cohort home: next assignment, syllabus progress, rank, classmates, pay |
 | Team | `/team` | Roster read from ArmyRegistry |
 
 Cohorts are defined in `src/lib/academy/cohorts.ts`. The pages below still run on sample data.
 
+### Demo mode
+
+`/join?demo=1` swaps in a simulated wallet and an in-memory copy of the contracts (`src/lib/demo/`), so anyone can click through the whole student path (connect, switch network, faucet, enlist, take and submit an assignment, get it approved and paid, claim) without a wallet or test ETH. Nothing touches Base Sepolia. It stays on for the browser tab until "Leave demo".
+
+## Build and deploy
+
+The app is a static site (`@sveltejs/adapter-static`): `npm run build` writes `build/`, which any static host can serve. Pages are prerendered shells rendered in the browser, and `404.html` serves the dynamic routes.
+
+- **At a domain root** (Vercel, Netlify, a custom domain): `npm run build`.
+- **Under a path**, as GitHub Pages serves this repo: `BASE_PATH=/vanguard npm run build`. Links in the app go through `resolve()` from `$app/paths`, so they follow the base path.
+
+`.github/workflows/pages.yml` builds it on every push to `main` and publishes it at the GitHub Pages root, with the live contracts page under `/live/`. `.github/workflows/web.yml` runs `npm run check` and a base-path build on pull requests.
+
 ## Navigation
 
 | Page | URL | Description |
 |------|-----|-------------|
-| Dashboard | `/` | Personal overview: stats, tasks, activity feed, team status |
+| Dashboard | `/dashboard` | Personal overview: stats, tasks, activity feed, team status |
 | Bounties | `/bounties` | Browse and filter all deals/engagements |
 | Bounty Detail | `/bounties/[id]` | Objectives, tasks, and contributors for a bounty |
 | Create Bounty | `/bounties/new` | Create a new bounty (officer rank required) |

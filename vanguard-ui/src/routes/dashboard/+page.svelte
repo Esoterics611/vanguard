@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { app } from '$stores/app.svelte';
 	import { RANK_META } from '$lib/types';
 	import { formatVgrd, formatDate, statusColor, statusLabel, priorityColor } from '$lib/utils/format';
@@ -87,12 +88,12 @@
 		<div class="lg:col-span-2 rounded-xl border border-vanguard-border bg-vanguard-surface">
 			<div class="flex items-center justify-between px-5 py-3 border-b border-vanguard-border">
 				<h3 class="text-sm font-medium text-vanguard-text">My Active Tasks</h3>
-				<a href="/tasks" class="text-xs text-cyan-400 hover:text-cyan-300 transition-colors">View all →</a>
+				<a href={resolve('/tasks')} class="text-xs text-cyan-400 hover:text-cyan-300 transition-colors">View all →</a>
 			</div>
 			<div class="divide-y divide-vanguard-border">
 				{#each activeTasks as task}
 					{@const bounty = app.getBounty(task.bountyId)}
-					<a href="/bounties/{task.bountyId}?task={task.id}" class="flex items-center gap-4 px-5 py-3.5 card-hover group">
+					<a href={resolve(`/bounties/${task.bountyId}`) + `?task=${task.id}`} class="flex items-center gap-4 px-5 py-3.5 card-hover group">
 						<div class="flex-shrink-0">
 							<div class="w-2 h-2 rounded-full {priorityColor(task.priority)}"
 								 style="background: currentColor"></div>
@@ -144,14 +145,14 @@
 	<div class="rounded-xl border border-vanguard-border bg-vanguard-surface">
 		<div class="flex items-center justify-between px-5 py-3 border-b border-vanguard-border">
 			<h3 class="text-sm font-medium text-vanguard-text">Active Bounties</h3>
-			<a href="/bounties" class="text-xs text-cyan-400 hover:text-cyan-300 transition-colors">View all →</a>
+			<a href={resolve('/bounties')} class="text-xs text-cyan-400 hover:text-cyan-300 transition-colors">View all →</a>
 		</div>
 		<div class="divide-y divide-vanguard-border">
 			{#each app.bounties.filter(b => b.status !== 'cancelled') as bounty}
 				{@const objectives = app.getBountyObjectives(bounty.id)}
 				{@const progress = app.getBountyProgress(bounty.id)}
 				{@const creator = app.getSoldier(bounty.creatorId)}
-				<a href="/bounties/{bounty.id}" class="block px-5 py-4 card-hover group">
+				<a href={resolve(`/bounties/${bounty.id}`)} class="block px-5 py-4 card-hover group">
 					<div class="flex items-start justify-between gap-4">
 						<div class="flex-1 min-w-0">
 							<div class="flex items-center gap-2 mb-1">
@@ -193,12 +194,12 @@
 	<div class="rounded-xl border border-vanguard-border bg-vanguard-surface">
 		<div class="flex items-center justify-between px-5 py-3 border-b border-vanguard-border">
 			<h3 class="text-sm font-medium text-vanguard-text">Team Online</h3>
-			<a href="/team" class="text-xs text-cyan-400 hover:text-cyan-300 transition-colors">View all →</a>
+			<a href={resolve('/team')} class="text-xs text-cyan-400 hover:text-cyan-300 transition-colors">View all →</a>
 		</div>
 		<div class="px-5 py-4 flex flex-wrap gap-3">
 			{#each app.soldiers.filter(s => s.isOnline) as soldier}
 				{@const meta = RANK_META[soldier.rank]}
-				<a href="/team/{soldier.id}" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-vanguard-surface-2 border border-vanguard-border hover:border-vanguard-border-bright transition-all group">
+				<a href={resolve(`/team/${soldier.id}`)} class="flex items-center gap-2 px-3 py-2 rounded-lg bg-vanguard-surface-2 border border-vanguard-border hover:border-vanguard-border-bright transition-all group">
 					<SoldierAvatar callsign={soldier.callsign} rank={soldier.rank} isOnline={true} size="sm" />
 					<div>
 						<span class="text-xs font-medium text-vanguard-text group-hover:text-cyan-400 transition-colors">{soldier.callsign}</span>

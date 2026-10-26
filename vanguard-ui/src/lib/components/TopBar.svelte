@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { resolve } from '$app/paths';
+	import type { RouteId } from '$app/types';
 	import { app } from '$stores/app.svelte';
 	import ConnectWallet from '$components/ConnectWallet.svelte';
 	import { Menu } from 'lucide-svelte';
 
-	const routeTitles: Record<string, string> = {
+	const routeTitles: Partial<Record<RouteId, string>> = {
 		'/academy': 'Academy',
-		'/': 'Dashboard',
+		'/dashboard': 'Dashboard',
 		'/bounties': 'Bounties',
 		'/objectives': 'Objectives',
 		'/tasks': 'My Tasks',
@@ -15,17 +17,23 @@
 		'/settings': 'Settings',
 	};
 
-	let currentPath = $derived($page.url.pathname);
-	let title = $derived(routeTitles[currentPath] ?? 'Vanguard');
+	// Route ids rather than URL paths, so the deploy base path doesn't matter.
+	let routeId = $derived($page.route.id);
+	let title = $derived((routeId && routeTitles[routeId]) ?? 'Vanguard');
 
-	// Breadcrumb from path
+	// Breadcrumb from the route id: /team/[id] → Team
+	const SECTIONS: Record<string, string> = {
+		bounties: resolve('/bounties'),
+		objectives: resolve('/objectives'),
+		team: resolve('/team'),
+	};
 	let breadcrumbs = $derived(() => {
-		const parts = currentPath.split('/').filter(Boolean);
+		const parts = (routeId ?? '').split('/').filter(Boolean);
 		if (parts.length <= 1) return [];
-		return parts.slice(0, -1).map((part, i) => ({
-			label: part.charAt(0).toUpperCase() + part.slice(1),
-			href: '/' + parts.slice(0, i + 1).join('/')
-		}));
+		return parts
+			.slice(0, -1)
+			.filter((part) => part in SECTIONS)
+			.map((part) => ({ label: part.charAt(0).toUpperCase() + part.slice(1), href: SECTIONS[part] }));
 	});
 </script>
 

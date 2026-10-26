@@ -10,6 +10,8 @@
 // text, and each assignment task with exactly `week.assignment`.
 // ═══════════════════════════════════════════════════════════════
 
+import { DEMO_SQUAD_ID, isDemo } from '$lib/demo/flag';
+
 const REPO = 'https://github.com/Esoterics611/vanguard/blob/main';
 
 export interface Reading {
@@ -137,7 +139,15 @@ export const COHORTS: Cohort[] = [
 ];
 
 export function getCohort(id: string | null | undefined): Cohort {
-	return COHORTS.find((c) => c.id === id) ?? COHORTS[0];
+	const cohort = COHORTS.find((c) => c.id === id) ?? COHORTS[0];
+	return isDemo() ? demoSchedule(cohort) : cohort;
+}
+
+/** In demo mode the cohort is open on the simulated chain and in its third week. */
+function demoSchedule(cohort: Cohort): Cohort {
+	const start = new Date(Date.now() - 15 * DAY);
+	const startDate = `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, '0')}-${String(start.getDate()).padStart(2, '0')}`;
+	return { ...cohort, startDate, squadId: DEMO_SQUAD_ID, instructor: { name: 'Demo instructor', address: null } };
 }
 
 /** The exact text the instructor fingerprints when creating a week's objective. */
@@ -182,6 +192,7 @@ export function formatCohortDates(cohort: Cohort): string {
 	return `${fmt(start)} – ${fmt(end)}, ${end.getFullYear()}`;
 }
 
-export function inviteLink(origin: string, cohort: Cohort, inviter: string): string {
-	return `${origin}/join?cohort=${encodeURIComponent(cohort.id)}&invite=${inviter}`;
+/** joinUrl: the absolute URL of the /join page, including any deploy base path. */
+export function inviteLink(joinUrl: string, cohort: Cohort, inviter: string): string {
+	return `${joinUrl}?cohort=${encodeURIComponent(cohort.id)}&invite=${inviter}`;
 }

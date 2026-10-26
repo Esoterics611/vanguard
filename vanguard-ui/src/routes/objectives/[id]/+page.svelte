@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { page } from '$app/stores';
 	import { app } from '$stores/app.svelte';
 	import { formatVgrd, formatDate, formatDeadline, priorityColor } from '$lib/utils/format';
@@ -8,7 +9,7 @@
 	import RankBadge from '$components/RankBadge.svelte';
 	import EmptyState from '$components/EmptyState.svelte';
 
-	let objectiveId = $derived($page.params.id);
+	let objectiveId = $derived($page.params.id ?? '');
 	let objective = $derived(app.getObjective(objectiveId));
 	let bounty = $derived(objective ? app.getBounty(objective.bountyId) : null);
 	let tasks = $derived(objective ? app.getObjectiveTasks(objectiveId) : []);
@@ -29,10 +30,10 @@
 		<!-- Header -->
 		<div class="rounded-xl border border-vanguard-border bg-vanguard-surface p-6">
 			<div class="flex items-center gap-2 mb-3 text-xs text-vanguard-text-muted">
-				<a href="/bounties" class="hover:text-cyan-400 transition-colors">Bounties</a>
+				<a href={resolve('/bounties')} class="hover:text-cyan-400 transition-colors">Bounties</a>
 				<span class="text-vanguard-border">/</span>
 				{#if bounty}
-					<a href="/bounties/{bounty.id}" class="hover:text-cyan-400 transition-colors">{bounty.title}</a>
+					<a href={resolve(`/bounties/${bounty.id}`)} class="hover:text-cyan-400 transition-colors">{bounty.title}</a>
 					<span class="text-vanguard-border">/</span>
 				{/if}
 			</div>

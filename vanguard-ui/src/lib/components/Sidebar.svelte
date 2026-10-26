@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { page } from '$app/stores';
+	import type { RouteId } from '$app/types';
 	import { app } from '$stores/app.svelte';
 	import { student } from '$lib/academy/student.svelte';
 	import { RANK_META } from '$lib/types';
@@ -8,6 +10,8 @@
 
 	interface NavItem {
 		label: string;
+		/** Route id, for highlighting the current page. */
+		route: RouteId;
 		href: string;
 		icon: string;
 		badge?: number;
@@ -18,37 +22,39 @@
 		items: NavItem[];
 	}
 
+	const JOIN_ITEM: NavItem = { label: 'Join', route: '/join', href: resolve('/join'), icon: '+' };
+
 	let sections = $derived<NavSection[]>([
 		{
 			title: 'Academy',
 			items: [
-				{ label: 'My cohort', href: '/academy', icon: '◆' },
-				...(student.member ? [] : [{ label: 'Join', href: '/join', icon: '+' }]),
+				{ label: 'My cohort', route: '/academy', href: resolve('/academy'), icon: '◆' },
+				...(student.member ? [] : [JOIN_ITEM]),
 			],
 		},
-		{ title: 'Guild', items: [{ label: 'Team', href: '/team', icon: '⬡' }] },
+		{ title: 'Guild', items: [{ label: 'Team', route: '/team', href: resolve('/team'), icon: '⬡' }] },
 		{
 			title: 'Preview · sample data',
 			items: [
-				{ label: 'Dashboard', href: '/', icon: '⌂' },
-				{ label: 'Bounties', href: '/bounties', icon: '◈' },
-				{ label: 'Objectives', href: '/objectives', icon: '⎇' },
-				{ label: 'Tasks', href: '/tasks', icon: '▸' },
-				{ label: 'Review', href: '/review', icon: '✓' },
+				{ label: 'Dashboard', route: '/dashboard', href: resolve('/dashboard'), icon: '⌂' },
+				{ label: 'Bounties', route: '/bounties', href: resolve('/bounties'), icon: '◈' },
+				{ label: 'Objectives', route: '/objectives', href: resolve('/objectives'), icon: '⎇' },
+				{ label: 'Tasks', route: '/tasks', href: resolve('/tasks'), icon: '▸' },
+				{ label: 'Review', route: '/review', href: resolve('/review'), icon: '✓' },
 			],
 		},
 	]);
 
 	const bottomNav: NavItem[] = [
-		{ label: 'Settings', href: '/settings', icon: '⚙' },
+		{ label: 'Settings', route: '/settings', href: resolve('/settings'), icon: '⚙' },
 	];
 
-	function isActive(href: string, currentPath: string): boolean {
-		if (href === '/') return currentPath === '/';
-		return currentPath.startsWith(href);
+	// Match on route ids, which don't carry the deploy base path.
+	function isActive(route: RouteId, current: string | null): boolean {
+		return current === route || !!current?.startsWith(`${route}/`);
 	}
 
-	let currentPath = $derived($page.url.pathname);
+	let currentPath = $derived($page.route.id);
 	let member = $derived(student.member);
 	let pendingReviews = $derived(app.objectives.filter(o => o.status === 'in_review').length);
 	// Weeks where the student has something to do: sent back, due, or open to take.
@@ -72,7 +78,7 @@
 >
 	<!-- Logo -->
 	<div class="flex items-center gap-3 px-4 h-14 border-b border-vanguard-border">
-		<a href="/" class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-700 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+		<a href={resolve('/')} class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-700 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
 			V
 		</a>
 		{#if !app.sidebarCollapsed}
@@ -91,8 +97,8 @@
 					<div class="px-3 pb-1 text-[10px] font-semibold uppercase tracking-widest text-vanguard-text-muted/70">{section.title}</div>
 				{/if}
 				{#each section.items as item}
-					{@const active = isActive(item.href, currentPath)}
-					{@const badge = navBadge(item.href)}
+					{@const active = isActive(item.route, currentPath)}
+					{@const badge = navBadge(item.route)}
 					<a
 						href={item.href}
 						class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150 group relative
@@ -119,7 +125,7 @@
 	<!-- Bottom Nav -->
 	<div class="px-2 pb-1">
 		{#each bottomNav as item}
-			{@const active = isActive(item.href, currentPath)}
+			{@const active = isActive(item.route, currentPath)}
 			<a
 				href={item.href}
 				class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-150
@@ -138,7 +144,7 @@
 	<!-- User Card: the connected member, read from the chain -->
 	{#if member}
 		<div class="border-t border-vanguard-border p-3">
-			<a href="/academy" class="block">
+			<a href={resolve('/academy')} class="block">
 				{#if !app.sidebarCollapsed}
 					<div class="flex items-center gap-3 group">
 						<RankInsignia rank={member.rank} size="md" />

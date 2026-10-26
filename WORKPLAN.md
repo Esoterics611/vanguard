@@ -38,7 +38,10 @@ The student's path: **invite link → wallet → Base Sepolia → test ETH for f
 | [x] | Sidebar puts the cohort pages first; pages still on sample data are labelled as such | `Sidebar.svelte`, `+layout.svelte` |
 | [x] | The app works on a phone: below desktop width the sidebar becomes a menu | `+layout.svelte`, `TopBar.svelte` |
 | [x] | Wallet reconnects on reload; switching network mid-flow no longer breaks the next transaction | `provider.svelte.ts` |
-| [ ] | **Host the web app at a public URL.** Students can't start without it. Needs a decision (see below). | |
+| [x] | The web app is a static site that runs at a domain root or under a path; `/` opens the cohort page and the sample dashboard moved to `/dashboard` | `svelte.config.js`, `+layout.ts` |
+| [x] | GitHub Pages deploy: on every push to `main` the Academy goes to esoterics611.github.io/vanguard/ and the live contracts page to `/live/`; a check-and-build job runs on pull requests | `.github/workflows/pages.yml`, `web.yml` |
+| [x] | Demo mode (`/join?demo=1`): a simulated wallet and chain to click through the whole student path before the cohort exists on chain, including a simulated instructor who approves, pays and promotes | `vanguard-ui/src/lib/demo/` |
+| [ ] | **Merge to `main` to publish the site.** Optional: a custom domain (Settings → Pages); the build adapts to it automatically | |
 | [ ] | Seed the callsign words on chain (section 2) before the first student enlists; until then callsigns show as `RECRUIT-XXXX` | |
 | [ ] | Hebrew edition of `/join` and `/academy` (the landing site and the flagship course are bilingual) | |
 | [ ] | Intake: an application form link in the cohort definition for now; Firebase `reviewApplication` flow later | `cohorts.ts` `intakeUrl` |
@@ -99,7 +102,7 @@ Bundle these, redeploy once with the multisig as admin and a separate signer, th
 
 ## Decisions waiting on the owner
 
-1. **Where the web app lives:** Vercel, Firebase Hosting, or GitHub Pages next to the live page.
+1. **Where the web app lives:** GitHub Pages is wired up and works now; a custom domain or another host (Vercel, Netlify, Firebase) only needs the build command in `vanguard-ui/README.md`.
 2. **Hebrew:** should onboarding ship in Hebrew too, and for cohort 1?
 3. **Cohort 1 details:** dates, size, instructor(s) and their wallet addresses, intake form link. Placeholders are in `cohorts.ts`.
 4. **Coursework pay:** zero, or a small test-VGRD reward per assignment.
@@ -109,3 +112,4 @@ Bundle these, redeploy once with the multisig as admin and a separate signer, th
 ## Session log
 
 - **2026-10-26:** Reviewed the repo against the Republic decks and wrote this plan. Built the onboarding path: cohort definition, `/join` (five detected steps, invite credit, welcome and invite link), `/academy` (standing, next assignment with in-browser fingerprinting and submission, syllabus with on-chain status, rank path, classmates, claim pay), readable callsigns, the sidebar regrouped with sample-data pages labelled, and a phone layout. No contract changes. This session's network blocked the Solidity compiler download and the Base Sepolia RPC, so the contracts weren't compiled and nothing ran against the live chain. Instead the whole student path (connect, switch network, faucet, enlist, take, submit, claim) was driven in Chromium against a simulated chain and wallet built from the app's ABIs, on desktop and phone sizes. `npm run check` is clean for the new code and `npm run build` passes. Next: pick hosting, fill in cohort 1's details, then the instructor page.
+- **2026-10-26 (later):** Made the web app deployable. It's a static build (adapter-static, 404.html fallback, base path from `BASE_PATH`); every internal link goes through `resolve()` and route matching uses route ids, so it works under `/vanguard/` on GitHub Pages or at any domain root. The Pages workflow now publishes the Academy at the root and the live contracts page at `/live/`; a new workflow type-checks and builds on pull requests. Added demo mode. Fixed the type errors that predated this plan, so `npm run check` is fully clean. Verified by serving the assembled site the way GitHub Pages does and clicking through demo mode in Chromium on desktop and phone: no real chain requests, and the deep-link fallback, the `/` redirect and "Leave demo" all work. Contract addresses and the redeploy are still for later.

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { app } from '$stores/app.svelte';
 	import { RANK_META } from '$lib/types';
@@ -74,7 +75,7 @@
 							{@const meta = RANK_META[soldier.rank]}
 							{@const tasks = app.getSoldierTasks(soldier.id)}
 							{@const completedTasks = tasks.filter(t => t.status === 'approved').length}
-							<a href="/team/{soldier.id}" class="rounded-xl border {group.borderColor} bg-vanguard-surface p-4 card-hover group">
+							<a href={resolve(`/team/${soldier.id}`)} class="rounded-xl border {group.borderColor} bg-vanguard-surface p-4 card-hover group">
 								<div class="flex items-center gap-3 mb-3">
 									<SoldierAvatar callsign={soldier.callsign} rank={soldier.rank} isOnline={soldier.isOnline} size="md" />
 									<div class="flex-1 min-w-0">

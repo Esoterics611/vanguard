@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { isAddress, parseEther } from 'ethers';
@@ -28,6 +29,8 @@
 	} from '$lib/contracts/chain';
 	import { cohortPhase, currentWeek, formatCohortDates, getCohort, inviteLink } from '$lib/academy/cohorts';
 	import { student } from '$lib/academy/student.svelte';
+	import { isDemo } from '$lib/demo/flag';
+	import { demoFaucet } from '$lib/demo/mock-chain';
 	import { RANK_META } from '$lib/types';
 	import RankInsignia from '$components/RankInsignia.svelte';
 	import TxNotice from '$components/academy/TxNotice.svelte';
@@ -115,6 +118,13 @@
 		return () => clearInterval(timer);
 	});
 
+	const demo = isDemo();
+
+	async function simulateFaucet() {
+		demoFaucet();
+		if (wallet.account) await readAccount(wallet.account);
+	}
+
 	let validInviter = $derived(inviter && !sameAddress(inviter.address, wallet.account) ? inviter : null);
 	let enlistOpen = $derived(cohort.squadId !== null && squad?.active === true);
 
@@ -143,7 +153,7 @@
 					: 'Opening soon'
 	);
 	let metamaskDeepLink = $derived(`https://metamask.app.link/dapp/${$page.url.host}${$page.url.pathname}${$page.url.search}`);
-	let myInviteLink = $derived(wallet.account ? inviteLink($page.url.origin, cohort, wallet.account) : '');
+	let myInviteLink = $derived(wallet.account ? inviteLink($page.url.origin + resolve('/join'), cohort, wallet.account) : '');
 </script>
 
 <svelte:head>
@@ -153,14 +163,14 @@
 
 <div class="join-bg min-h-screen">
 	<header class="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 sm:px-6">
-		<a href="/join?cohort={cohort.id}" class="flex items-center gap-3">
+		<a href={resolve('/join') + `?cohort=${cohort.id}`} class="flex items-center gap-3">
 			<span class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-700 text-sm font-bold text-white">V</span>
 			<span class="flex flex-col leading-tight">
 				<span class="text-sm font-semibold tracking-wide text-vanguard-text">VANGUARD</span>
 				<span class="text-[10px] tracking-[0.2em] text-vanguard-text-muted">ACADEMY</span>
 			</span>
 		</a>
-		<a href="/academy" class="flex items-center gap-1.5 text-sm text-vanguard-text-muted transition-colors hover:text-cyan-300">
+		<a href={resolve('/academy')} class="flex items-center gap-1.5 text-sm text-vanguard-text-muted transition-colors hover:text-cyan-300">
 			<span class="hidden sm:inline">Already enlisted?</span> <span class="text-cyan-400">Open your cohort</span> <ArrowRight size={14} />
 		</a>
 	</header>
@@ -179,6 +189,15 @@
 				<span class="block text-vanguard-text-muted">Earn your rank on chain.</span>
 			</h1>
 			<p class="max-w-xl text-base leading-relaxed text-vanguard-text-muted sm:text-lg">{cohort.pitch}</p>
+			{#if !demo}
+				<a
+					href={resolve('/join') + `?cohort=${cohort.id}&demo=1`}
+					data-sveltekit-reload
+					class="inline-flex items-center gap-1.5 text-sm text-cyan-300 transition-colors hover:text-cyan-200"
+				>
+					Just looking? Preview the student experience with a simulated wallet <ArrowRight size={14} />
+				</a>
+			{/if}
 
 			{#if validInviter && !enlistedHere}
 				<div class="flex w-fit items-center gap-3 rounded-xl border border-amber-400/25 bg-amber-400/5 py-2 pl-2 pr-4">
@@ -213,7 +232,7 @@
 							</p>
 						</div>
 						<a
-							href="/academy"
+							href={resolve('/academy')}
 							class="flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-500 px-4 py-3 text-sm font-semibold text-vanguard-bg transition-colors hover:bg-cyan-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300"
 						>
 							Go to your cohort <ArrowRight size={16} />
@@ -310,11 +329,15 @@
 														<CopyField value={wallet.account ?? ''} />
 													</div>
 													<div class="flex flex-wrap gap-2">
-														{#each FAUCETS as faucet, f}
-															<a class={f === 0 ? 'btn-primary' : 'btn-ghost'} href={faucet.href} target="_blank" rel="noopener">
-																{faucet.label} <ExternalLink size={13} />
-															</a>
-														{/each}
+														{#if demo}
+															<button class="btn-primary" onclick={simulateFaucet}>Simulate a faucet payout</button>
+														{:else}
+															{#each FAUCETS as faucet, f}
+																<a class={f === 0 ? 'btn-primary' : 'btn-ghost'} href={faucet.href} target="_blank" rel="noopener">
+																	{faucet.label} <ExternalLink size={13} />
+																</a>
+															{/each}
+														{/if}
 													</div>
 													<p class="flex items-center gap-2 text-xs text-vanguard-text-muted">
 														<span class="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan-400"></span>
@@ -407,6 +430,11 @@
 					{/each}
 				</ul>
 			</div>
+
+			<p class="border-t border-vanguard-border pt-6 text-sm text-vanguard-text-muted">
+				The guild runs on eight contracts on Base Sepolia, source verified.
+				<a href={resolve('/') + 'live/'} data-sveltekit-reload class="text-cyan-300 hover:underline">See them read live</a>
+			</p>
 		</section>
 	</main>
 </div>

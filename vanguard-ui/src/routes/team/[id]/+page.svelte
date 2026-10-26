@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { page } from '$app/stores';
 	import { app } from '$stores/app.svelte';
 	import { RANK_META, RANKS } from '$lib/types';
@@ -9,7 +10,7 @@
 	import ProgressBar from '$components/ProgressBar.svelte';
 	import EmptyState from '$components/EmptyState.svelte';
 
-	let soldierId = $derived($page.params.id);
+	let soldierId = $derived($page.params.id ?? '');
 	let soldier = $derived(app.getSoldier(soldierId));
 	let rankMeta = $derived(soldier ? RANK_META[soldier.rank] : null);
 	let tasks = $derived(app.getSoldierTasks(soldierId));
@@ -45,7 +46,7 @@
 		<div class="rounded-xl border border-vanguard-border bg-vanguard-surface p-6"
 			 style="border-color: color-mix(in srgb, {rankMeta.color} 30%, var(--color-vanguard-border))">
 			<div class="flex items-center gap-2 mb-4 text-xs text-vanguard-text-muted">
-				<a href="/team" class="hover:text-cyan-400 transition-colors">← Team</a>
+				<a href={resolve('/team')} class="hover:text-cyan-400 transition-colors">← Team</a>
 			</div>
 			<div class="flex items-start gap-6">
 				<SoldierAvatar callsign={soldier.callsign} rank={soldier.rank} isOnline={soldier.isOnline} size="lg" />
@@ -144,7 +145,7 @@
 					{#each contributingBounties() as bounty}
 						{#if bounty}
 							{@const bountyTasks = tasks.filter(t => t.bountyId === bounty.id)}
-							<a href="/bounties/{bounty.id}" class="block px-5 py-3 card-hover group">
+							<a href={resolve(`/bounties/${bounty.id}`)} class="block px-5 py-3 card-hover group">
 								<div class="flex items-center gap-2 mb-1">
 									<span class="text-xs text-cyan-500">◈</span>
 									<span class="text-sm text-vanguard-text group-hover:text-cyan-400 transition-colors truncate">{bounty.title}</span>
