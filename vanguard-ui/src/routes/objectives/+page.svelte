@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { app } from '$stores/app.svelte';
 	import { formatVgrd, formatDeadline } from '$lib/utils/format';
 	import StatusBadge from '$components/StatusBadge.svelte';
@@ -65,7 +66,7 @@
 			{@const assignee = obj.assigneeId ? app.getSoldier(obj.assigneeId) : null}
 			{@const unit = obj.unitId ? app.getUnit(obj.unitId) : null}
 			{@const deadline = formatDeadline(obj.deadline)}
-			<a href="/objectives/{obj.id}" class="flex items-center gap-4 px-5 py-4 rounded-xl border border-vanguard-border bg-vanguard-surface card-hover group">
+			<a href={resolve(`/objectives/${obj.id}`)} class="flex items-center gap-4 px-5 py-4 rounded-xl border border-vanguard-border bg-vanguard-surface card-hover group">
 				<!-- Status icon -->
 				<span class="text-lg flex-shrink-0"
 					class:text-cyan-400={obj.status === 'open'}

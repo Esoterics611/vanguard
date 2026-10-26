@@ -1,0 +1,32 @@
+name: Web app
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "vanguard-ui/**"
+      - ".github/workflows/web.yml"
+  pull_request:
+    paths:
+      - "vanguard-ui/**"
+      - ".github/workflows/web.yml"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: vanguard-ui
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: vanguard-ui/package-lock.json
+      - run: npm ci
+      - run: npm run check
+      # Build under a base path, as GitHub Pages serves it.
+      - run: npm run build
+        env:
+          BASE_PATH: /vanguard

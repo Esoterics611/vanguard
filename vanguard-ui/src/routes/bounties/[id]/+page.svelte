@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { page } from '$app/stores';
 	import { app } from '$stores/app.svelte';
 	import { formatVgrd, formatDate, formatDeadline, priorityColor } from '$lib/utils/format';
@@ -8,7 +9,7 @@
 	import RankBadge from '$components/RankBadge.svelte';
 	import EmptyState from '$components/EmptyState.svelte';
 
-	let bountyId = $derived($page.params.id);
+	let bountyId = $derived($page.params.id ?? '');
 	let bounty = $derived(app.getBounty(bountyId));
 	let objectives = $derived(app.getBountyObjectives(bountyId));
 	let creator = $derived(bounty ? app.getSoldier(bounty.creatorId) : null);
@@ -45,7 +46,7 @@
 			<div class="flex items-start justify-between gap-6">
 				<div class="flex-1 min-w-0">
 					<div class="flex items-center gap-2 mb-2">
-						<a href="/bounties" class="text-xs text-vanguard-text-muted hover:text-cyan-400 transition-colors">← Bounties</a>
+						<a href={resolve('/bounties')} class="text-xs text-vanguard-text-muted hover:text-cyan-400 transition-colors">← Bounties</a>
 						<span class="text-vanguard-border">/</span>
 					</div>
 					<div class="flex items-center gap-3 mb-2">
@@ -139,7 +140,7 @@
 					{@const objProgress = app.getObjectiveProgress(obj.id)}
 					{@const assignee = obj.assigneeId ? app.getSoldier(obj.assigneeId) : null}
 					{@const unit = obj.unitId ? app.getUnit(obj.unitId) : null}
-					<a href="/objectives/{obj.id}" class="block rounded-xl border border-vanguard-border bg-vanguard-surface card-hover group">
+					<a href={resolve(`/objectives/${obj.id}`)} class="block rounded-xl border border-vanguard-border bg-vanguard-surface card-hover group">
 						<div class="p-5">
 							<div class="flex items-start justify-between gap-4">
 								<div class="flex-1 min-w-0">
@@ -233,7 +234,7 @@
 				{#each contributors() as soldier}
 					{#if soldier}
 						{@const tasks = app.getSoldierTasks(soldier.id).filter(t => t.bountyId === bountyId)}
-						<a href="/team/{soldier.id}" class="rounded-xl border border-vanguard-border bg-vanguard-surface p-4 card-hover group">
+						<a href={resolve(`/team/${soldier.id}`)} class="rounded-xl border border-vanguard-border bg-vanguard-surface p-4 card-hover group">
 							<div class="flex items-center gap-3 mb-3">
 								<SoldierAvatar callsign={soldier.callsign} rank={soldier.rank} isOnline={soldier.isOnline} size="md" />
 								<div>

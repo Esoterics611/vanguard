@@ -9,7 +9,8 @@
 | **Network** | Base Sepolia (chain 84532) |
 | **Contracts** | 8 deployed 27 Apr 2026, all source verified on Blockscout |
 | **Proven end to end** | A full bounty ran on the live contracts in 21 transactions ([record](contracts/demo/run.json)) |
-| **Live view** | [esoterics611.github.io/vanguard](https://esoterics611.github.io/vanguard/) reads the contracts in your browser |
+| **Academy** | [esoterics611.github.io/vanguard](https://esoterics611.github.io/vanguard/): cohort onboarding; [try the demo](https://esoterics611.github.io/vanguard/join?demo=1) with a simulated wallet |
+| **Live view** | [esoterics611.github.io/vanguard/live](https://esoterics611.github.io/vanguard/live/) reads the contracts in your browser |
 | **Tests** | 15 passing (`contracts/`) |
 | **Token** | VGRD, 1 billion supply, rank-weighted governance |
 
@@ -63,7 +64,7 @@ The contracts are built as a reusable **engine** (`contracts/contracts/base/`: r
 ```
 vanguard/
 ├── contracts/       Solidity engine + Vanguard vertical, tests, deploy and demo scripts
-├── vanguard-ui/     Web app (SvelteKit 2, Svelte 5, Tailwind v4); team roster reads the live ArmyRegistry
+├── vanguard-ui/     Academy web app (SvelteKit 2, Svelte 5, Tailwind v4), built as a static site
 ├── backend/         Firebase Cloud Functions (TypeScript): applications, members, units, promotions
 ├── vanguard-docs/   Protocol guide (MkDocs): concepts, contract reference, integration
 ├── vanguard-site/   Landing page
@@ -78,7 +79,7 @@ vanguard/
 cd contracts && npm install && npx hardhat test
 
 # web app
-cd vanguard-ui && npm install && npm run dev          # http://localhost:5173
+cd vanguard-ui && npm install && npm run dev          # http://localhost:5173/join?demo=1
 
 # backend (Firebase emulators)
 cd backend/functions && npm install && cd ../.. && firebase emulators:start

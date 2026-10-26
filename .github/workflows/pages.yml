@@ -1,9 +1,14 @@
-name: Live page
+name: Site
+
+# Publishes the Vanguard Academy web app at the site root and the live
+# contracts page under /live/ (esoterics611.github.io/vanguard/ and
+# esoterics611.github.io/vanguard/live/).
 
 on:
   push:
     branches: [main]
     paths:
+      - "vanguard-ui/**"
       - "live/**"
       - "contracts/demo/run.json"
       - "contracts/deployed/**"
@@ -27,13 +32,29 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - id: pages
+        uses: actions/configure-pages@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: vanguard-ui/package-lock.json
+      - name: Build the web app
+        working-directory: vanguard-ui
+        env:
+          # "/vanguard" on github.io, "" on a custom domain.
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+        run: |
+          npm ci
+          npm run build
       - name: Assemble the site
         run: |
-          mkdir -p _site
-          cp -r live/. _site/
-          cp contracts/deployed/base-sepolia.json _site/deployment.json
-          cp contracts/demo/run.json _site/run.json
-      - uses: actions/configure-pages@v5
+          mkdir -p _site/live
+          cp -r vanguard-ui/build/. _site/
+          cp -r live/. _site/live/
+          cp contracts/deployed/base-sepolia.json _site/live/deployment.json
+          cp contracts/demo/run.json _site/live/run.json
+          touch _site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
