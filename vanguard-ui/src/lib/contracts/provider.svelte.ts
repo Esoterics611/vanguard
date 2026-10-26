@@ -43,6 +43,9 @@ class WalletStore {
 		const hex = args[0] as string;
 		const parsed = parseInt(hex, 16);
 		this.chainId = Number.isFinite(parsed) ? parsed : null;
+		// An ethers BrowserProvider is pinned to the network it was created on.
+		const eth = this.#getEthereum();
+		if (eth && this.account) this.provider = new BrowserProvider(eth);
 		void this.#refreshSigner();
 	};
 
@@ -78,6 +81,33 @@ class WalletStore {
 		}
 	}
 
+	async #attach(eth: Eip1193Provider, account: string): Promise<void> {
+		const provider = new BrowserProvider(eth);
+		const network = await provider.getNetwork();
+		this.provider = provider;
+		this.account = account;
+		this.chainId = Number(network.chainId);
+		await this.#refreshSigner();
+		this.#bindListeners(eth);
+	}
+
+	/** True when a browser wallet (MetaMask or similar) is installed. */
+	hasWallet(): boolean {
+		return this.#getEthereum() !== null;
+	}
+
+	/** Reconnect silently if this site was already authorised in the wallet. */
+	async restore(): Promise<void> {
+		const eth = this.#getEthereum();
+		if (!eth || this.isConnected) return;
+		try {
+			const accounts = await eth.request<string[]>({ method: 'eth_accounts' });
+			if (accounts && accounts.length > 0) await this.#attach(eth, accounts[0]);
+		} catch {
+			// stay disconnected; the user can connect explicitly
+		}
+	}
+
 	async connect(): Promise<void> {
 		this.error = null;
 		const eth = this.#getEthereum();
@@ -92,13 +122,7 @@ class WalletStore {
 				this.error = 'No accounts returned by wallet.';
 				return;
 			}
-			const provider = new BrowserProvider(eth);
-			const network = await provider.getNetwork();
-			this.provider = provider;
-			this.account = accounts[0];
-			this.chainId = Number(network.chainId);
-			await this.#refreshSigner();
-			this.#bindListeners(eth);
+			await this.#attach(eth, accounts[0]);
 		} catch (e) {
 			this.error = e instanceof Error ? e.message : 'Failed to connect wallet.';
 		} finally {

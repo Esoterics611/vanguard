@@ -18,7 +18,7 @@
 	>
 		<span class="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.8)]"></span>
 		<span>{shortAddress(wallet.account)}</span>
-		<span class="text-[10px] uppercase tracking-wider text-cyan-300/60">Disconnect</span>
+		<span class="hidden sm:inline text-[10px] uppercase tracking-wider text-cyan-300/60">Disconnect</span>
 	</button>
 {:else}
 	<button

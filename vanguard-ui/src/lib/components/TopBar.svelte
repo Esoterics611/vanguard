@@ -2,8 +2,10 @@
 	import { page } from '$app/stores';
 	import { app } from '$stores/app.svelte';
 	import ConnectWallet from '$components/ConnectWallet.svelte';
+	import { Menu } from 'lucide-svelte';
 
 	const routeTitles: Record<string, string> = {
+		'/academy': 'Academy',
 		'/': 'Dashboard',
 		'/bounties': 'Bounties',
 		'/objectives': 'Objectives',
@@ -27,8 +29,16 @@
 	});
 </script>
 
-<header class="h-14 border-b border-vanguard-border bg-vanguard-surface/80 backdrop-blur-sm flex items-center justify-between px-6 sticky top-0 z-30">
-	<div class="flex items-center gap-4">
+<header class="h-14 border-b border-vanguard-border bg-vanguard-surface/80 backdrop-blur-sm flex items-center justify-between gap-3 px-4 sm:px-6 sticky top-0 z-20">
+	<div class="flex items-center gap-3 sm:gap-4 min-w-0">
+		<button
+			onclick={() => (app.mobileNavOpen = !app.mobileNavOpen)}
+			class="lg:hidden -ml-1 p-1.5 rounded-lg text-vanguard-text-muted hover:text-vanguard-text hover:bg-vanguard-surface-2"
+			aria-label="Menu"
+			aria-expanded={app.mobileNavOpen}
+		>
+			<Menu size={18} />
+		</button>
 		<!-- Breadcrumbs -->
 		{#if breadcrumbs().length > 0}
 			<div class="flex items-center gap-1 text-xs text-vanguard-text-muted">
@@ -45,14 +55,14 @@
 		<!-- Search / Command Palette Trigger -->
 		<button
 			onclick={() => app.toggleCommandPalette()}
-			class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-vanguard-border bg-vanguard-surface-2 text-vanguard-text-muted text-xs hover:border-vanguard-border-bright hover:text-vanguard-text transition-all"
+			class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-vanguard-border bg-vanguard-surface-2 text-vanguard-text-muted text-xs hover:border-vanguard-border-bright hover:text-vanguard-text transition-all"
 		>
 			<span>Search...</span>
 			<kbd class="text-[10px] bg-vanguard-surface-3 px-1.5 py-0.5 rounded border border-vanguard-border">⌘K</kbd>
 		</button>
 
 		<!-- Notifications -->
-		<button class="relative p-2 rounded-lg text-vanguard-text-muted hover:text-vanguard-text hover:bg-vanguard-surface-2 transition-colors">
+		<button class="relative hidden sm:block p-2 rounded-lg text-vanguard-text-muted hover:text-vanguard-text hover:bg-vanguard-surface-2 transition-colors">
 			<span class="text-sm">◉</span>
 			{#if app.stats.pendingReviews > 0}
 				<span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-cyan-400"></span>

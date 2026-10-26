@@ -25,7 +25,7 @@ export interface RankMeta {
 
 export const RANK_META: Record<Rank, RankMeta> = {
 	PVT:  { rank: 'PVT',  label: 'Private',              tier: 'enlisted', votingPower: 1,  multiplier: 1.0,  xpRequired: 0,     color: '#a17c5a' },
-	PV2:  { rank: 'PV2',  label: 'Private Second Class',  tier: 'enlisted', votingPower: 2,  multiplier: 1.25, xpRequired: 100,   color: '#a17c5a' },
+	PV2:  { rank: 'PV2',  label: 'Private Second Class',  tier: 'enlisted', votingPower: 2,  multiplier: 1.2, xpRequired: 100,   color: '#a17c5a' },
 	PFC:  { rank: 'PFC',  label: 'Private First Class',   tier: 'enlisted', votingPower: 3,  multiplier: 1.5,  xpRequired: 300,   color: '#a17c5a' },
 	CPL:  { rank: 'CPL',  label: 'Corporal',              tier: 'enlisted', votingPower: 5,  multiplier: 2.0,  xpRequired: 600,   color: '#a17c5a' },
 	SGT:  { rank: 'SGT',  label: 'Sergeant',              tier: 'nco',      votingPower: 10, multiplier: 3.0,  xpRequired: 1000,  color: '#94a3b8' },

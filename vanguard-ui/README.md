@@ -12,6 +12,16 @@ npm run dev
 
 Open [http://localhost:5173](http://localhost:5173)
 
+## Academy (live on Base Sepolia)
+
+| Page | URL | Description |
+|------|-----|-------------|
+| Join | `/join?cohort=cohort-1&invite=0x…` | Guided setup: wallet, network, test ETH, enlist in the cohort squad |
+| Academy | `/academy` | Cohort home: next assignment, syllabus progress, rank, classmates, pay |
+| Team | `/team` | Roster read from ArmyRegistry |
+
+Cohorts are defined in `src/lib/academy/cohorts.ts`. The pages below still run on sample data.
+
 ## Navigation
 
 | Page | URL | Description |

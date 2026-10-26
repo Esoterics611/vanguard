@@ -7,27 +7,8 @@ import {
 	MOCK_SOLDIERS, MOCK_BOUNTIES, MOCK_OBJECTIVES, MOCK_TASKS,
 	MOCK_ACTIVITIES, MOCK_UNITS, CURRENT_USER_ID
 } from './mock-data';
-import type { Soldier, Bounty, Objective, Task, Activity, Unit, DashboardStats, Rank } from '$lib/types';
+import type { Soldier, Bounty, Objective, Task, Activity, Unit, DashboardStats } from '$lib/types';
 import { RANK_META } from '$lib/types';
-
-// ── Chain helpers (roster read) ────────────────────────────────
-
-function bytes32ToString(hex: string): string {
-	const trimmed = hex.replace(/^0x/, '');
-	let result = '';
-	for (let i = 0; i < trimmed.length; i += 2) {
-		const code = parseInt(trimmed.slice(i, i + 2), 16);
-		if (code === 0) break;
-		result += String.fromCharCode(code);
-	}
-	return result;
-}
-
-// 12 on-chain rank slots: GUEST=0, PVT=1 … CPT=11
-const CHAIN_RANK_MAP: Record<number, Rank> = {
-	0: 'PVT', 1: 'PVT', 2: 'PV2', 3: 'PFC', 4: 'CPL',
-	5: 'SGT', 6: 'SSG', 7: 'SFC', 8: '1SG', 9: '2LT', 10: '1LT', 11: 'CPT',
-};
 
 // ── App State ──────────────────────────────────────────────────
 
@@ -46,6 +27,7 @@ class AppStore {
 
 	// UI state
 	sidebarCollapsed = $state(false);
+	mobileNavOpen = $state(false);
 	currentUserId = $state(CURRENT_USER_ID);
 	commandPaletteOpen = $state(false);
 
@@ -95,57 +77,26 @@ class AppStore {
 	async loadSoldiersFromChain(): Promise<void> {
 		this.chainSoldiersLoading = true;
 		try {
-			const { JsonRpcProvider } = await import('ethers');
-			const { getArmyRegistry } = await import('$lib/contracts/contracts.svelte');
-			const { BASE_SEPOLIA_RPC_URL } = await import('$lib/contracts/addresses');
-
-			const provider = new JsonRpcProvider(BASE_SEPOLIA_RPC_URL);
-			const registry = getArmyRegistry(provider) as any;
-
-			// Short-circuit if no soldiers enlisted yet
-			const total = Number(await registry.totalSoldiers());
-			if (total === 0) {
-				this.chainSoldiers = [];
-				return;
-			}
-
-			// Enumerate all units (view calls, no log range limit) to collect wallet addresses
-			const nextId = Number(await registry.nextUnitId());
-			const unitIds = Array.from({ length: nextId - 1 }, (_, i) => i + 1);
-			const memberLists: string[][] = await Promise.all(unitIds.map((id: number) => registry.getUnitMembers(id)));
-			const ZERO = '0x0000000000000000000000000000000000000000';
-			const wallets = [...new Set(memberLists.flat().filter((w: string) => w !== ZERO))];
-
-			if (wallets.length === 0) {
-				this.chainSoldiers = [];
-				return;
-			}
-
-			const rawSoldiers = await Promise.all(wallets.map((w: string) => registry.getSoldier(w)));
-
-			this.chainSoldiers = rawSoldiers.map((s: any, i: number) => {
-				const rankIdx = Number(s.rank);
-				const rank: Rank = CHAIN_RANK_MAP[rankIdx] ?? 'PVT';
-				const callsign = bytes32ToString(s.callsign as string);
-				return {
-					id: wallets[i].toLowerCase(),
-					callsign: callsign || `RECRUIT-${wallets[i].slice(2, 6).toUpperCase()}`,
-					walletAddress: wallets[i].toLowerCase(),
-					rank,
-					xp: Number(s.tasksCompleted) * 100,
-					vgrdEarned: Number(s.totalEarned) / 1e18,
-					votingPower: RANK_META[rank].votingPower,
-					tasksCompleted: Number(s.tasksCompleted),
-					squadId: s.unitId > 0n ? s.unitId.toString() : null,
-					sectionId: null,
-					platoonId: null,
-					companyId: null,
-					specialty: '',
-					avatarUrl: null,
-					enlistedAt: new Date(Number(s.enlistedAt) * 1000).toISOString(),
-					isOnline: false,
-				} satisfies Soldier;
-			});
+			const { loadAllMembers } = await import('$lib/contracts/chain');
+			const members = await loadAllMembers();
+			this.chainSoldiers = members.map((m) => ({
+				id: m.address.toLowerCase(),
+				callsign: m.callsign,
+				walletAddress: m.address.toLowerCase(),
+				rank: m.rank,
+				xp: m.tasksCompleted * 100,
+				vgrdEarned: Number(m.totalEarned) / 1e18,
+				votingPower: RANK_META[m.rank].votingPower,
+				tasksCompleted: m.tasksCompleted,
+				squadId: m.unitId > 0 ? String(m.unitId) : null,
+				sectionId: null,
+				platoonId: null,
+				companyId: null,
+				specialty: '',
+				avatarUrl: null,
+				enlistedAt: m.enlistedAt.toISOString(),
+				isOnline: false,
+			} satisfies Soldier));
 		} catch (e) {
 			console.error('[chain] loadSoldiersFromChain error:', e);
 			this.chainSoldiers = [];

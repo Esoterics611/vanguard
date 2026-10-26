@@ -1,5 +1,7 @@
 # Vanguard DAO — Roadmap
 
+> Current priorities, status and open decisions live in [WORKPLAN.md](WORKPLAN.md). This file is the earlier roadmap, kept for reference.
+
 > Last updated: 2026-10-17
 
 ## Where we are

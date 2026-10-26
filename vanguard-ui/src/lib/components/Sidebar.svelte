@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { app } from '$stores/app.svelte';
+	import { student } from '$lib/academy/student.svelte';
 	import { RANK_META } from '$lib/types';
-	import { formatVgrd } from '$lib/utils/format';
+	import { formatToken } from '$lib/contracts/chain';
 	import RankInsignia from '$components/RankInsignia.svelte';
 
 	interface NavItem {
@@ -12,14 +13,31 @@
 		badge?: number;
 	}
 
-	const mainNav: NavItem[] = [
-		{ label: 'Dashboard', href: '/', icon: '⌂' },
-		{ label: 'Bounties', href: '/bounties', icon: '◈' },
-		{ label: 'Objectives', href: '/objectives', icon: '⎇' },
-		{ label: 'Tasks', href: '/tasks', icon: '▸' },
-		{ label: 'Team', href: '/team', icon: '⬡' },
-		{ label: 'Review', href: '/review', icon: '✓' },
-	];
+	interface NavSection {
+		title: string;
+		items: NavItem[];
+	}
+
+	let sections = $derived<NavSection[]>([
+		{
+			title: 'Academy',
+			items: [
+				{ label: 'My cohort', href: '/academy', icon: '◆' },
+				...(student.member ? [] : [{ label: 'Join', href: '/join', icon: '+' }]),
+			],
+		},
+		{ title: 'Guild', items: [{ label: 'Team', href: '/team', icon: '⬡' }] },
+		{
+			title: 'Preview · sample data',
+			items: [
+				{ label: 'Dashboard', href: '/', icon: '⌂' },
+				{ label: 'Bounties', href: '/bounties', icon: '◈' },
+				{ label: 'Objectives', href: '/objectives', icon: '⎇' },
+				{ label: 'Tasks', href: '/tasks', icon: '▸' },
+				{ label: 'Review', href: '/review', icon: '✓' },
+			],
+		},
+	]);
 
 	const bottomNav: NavItem[] = [
 		{ label: 'Settings', href: '/settings', icon: '⚙' },
@@ -31,11 +49,13 @@
 	}
 
 	let currentPath = $derived($page.url.pathname);
-	let user = $derived(app.currentUser);
-	let rankMeta = $derived(user ? RANK_META[user.rank] : null);
+	let member = $derived(student.member);
 	let pendingReviews = $derived(app.objectives.filter(o => o.status === 'in_review').length);
+	// Weeks where the student has something to do: sent back, due, or open to take.
+	let cohortActions = $derived(student.weeks.filter(w => w.status === 'changes' || w.status === 'todo' || w.status === 'available').length);
 
 	function navBadge(href: string): number | undefined {
+		if (href === '/academy' && cohortActions > 0) return cohortActions;
 		if (href === '/review' && pendingReviews > 0) return pendingReviews;
 		if (href === '/tasks') {
 			const myActive = app.myTasks.filter(t => t.status !== 'approved').length;
@@ -46,7 +66,7 @@
 </script>
 
 <aside
-	class="fixed left-0 top-0 bottom-0 z-40 flex flex-col border-r border-vanguard-border bg-vanguard-surface transition-all duration-200"
+	class="fixed left-0 top-0 bottom-0 z-40 flex-col border-r border-vanguard-border bg-vanguard-surface transition-all duration-200 {app.mobileNavOpen ? 'flex' : 'hidden'} lg:flex"
 	class:w-60={!app.sidebarCollapsed}
 	class:w-16={app.sidebarCollapsed}
 >
@@ -64,28 +84,35 @@
 	</div>
 
 	<!-- Main Navigation -->
-	<nav class="flex-1 py-3 px-2 space-y-0.5 overflow-y-auto">
-		{#each mainNav as item}
-			{@const active = isActive(item.href, currentPath)}
-			{@const badge = navBadge(item.href)}
-			<a
-				href={item.href}
-				class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150 group relative
-					{active
-						? 'bg-cyan-500/10 text-cyan-400 font-medium'
-						: 'text-vanguard-text-muted hover:text-vanguard-text hover:bg-vanguard-surface-2'}"
-			>
-				{#if active}
-					<div class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-cyan-400 rounded-r"></div>
-				{/if}
-				<span class="text-base flex-shrink-0 w-5 text-center" class:text-cyan-400={active}>{item.icon}</span>
+	<nav class="flex-1 py-3 px-2 space-y-4 overflow-y-auto">
+		{#each sections as section}
+			<div class="space-y-0.5">
 				{#if !app.sidebarCollapsed}
-					<span class="flex-1 truncate">{item.label}</span>
-					{#if badge}
-						<span class="tag bg-cyan-500/20 text-cyan-400">{badge}</span>
-					{/if}
+					<div class="px-3 pb-1 text-[10px] font-semibold uppercase tracking-widest text-vanguard-text-muted/70">{section.title}</div>
 				{/if}
-			</a>
+				{#each section.items as item}
+					{@const active = isActive(item.href, currentPath)}
+					{@const badge = navBadge(item.href)}
+					<a
+						href={item.href}
+						class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150 group relative
+							{active
+								? 'bg-cyan-500/10 text-cyan-400 font-medium'
+								: 'text-vanguard-text-muted hover:text-vanguard-text hover:bg-vanguard-surface-2'}"
+					>
+						{#if active}
+							<div class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-cyan-400 rounded-r"></div>
+						{/if}
+						<span class="text-base flex-shrink-0 w-5 text-center" class:text-cyan-400={active}>{item.icon}</span>
+						{#if !app.sidebarCollapsed}
+							<span class="flex-1 truncate">{item.label}</span>
+							{#if badge}
+								<span class="tag bg-cyan-500/20 text-cyan-400">{badge}</span>
+							{/if}
+						{/if}
+					</a>
+				{/each}
+			</div>
 		{/each}
 	</nav>
 
@@ -108,27 +135,21 @@
 		{/each}
 	</div>
 
-	<!-- User Card -->
-	{#if user && rankMeta}
+	<!-- User Card: the connected member, read from the chain -->
+	{#if member}
 		<div class="border-t border-vanguard-border p-3">
-			<a href="/settings" class="block">
+			<a href="/academy" class="block">
 				{#if !app.sidebarCollapsed}
 					<div class="flex items-center gap-3 group">
-						<div class="relative flex-shrink-0">
-							<RankInsignia rank={user.rank} size="md" />
-							<div class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-vanguard-surface"
-								 class:bg-emerald-400={user.isOnline}
-								 class:bg-zinc-500={!user.isOnline}
-								 class:pulse-online={user.isOnline}></div>
-						</div>
+						<RankInsignia rank={member.rank} size="md" />
 						<div class="flex flex-col min-w-0">
-							<span class="text-sm font-medium text-vanguard-text truncate group-hover:text-cyan-400 transition-colors">{user.callsign}</span>
-							<span class="text-[10px] text-vanguard-text-muted">{rankMeta.label} · {formatVgrd(user.vgrdEarned)} VGRD</span>
+							<span class="text-sm font-medium font-mono text-vanguard-text truncate group-hover:text-cyan-400 transition-colors">{member.callsign}</span>
+							<span class="text-[10px] text-vanguard-text-muted">{RANK_META[member.rank].label} · {formatToken(member.totalEarned, 0)} VGRD</span>
 						</div>
 					</div>
 				{:else}
 					<div class="flex justify-center">
-						<RankInsignia rank={user.rank} size="md" />
+						<RankInsignia rank={member.rank} size="md" />
 					</div>
 				{/if}
 			</a>
